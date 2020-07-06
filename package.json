@@ -1,0 +1,25 @@
+{
+  "main": "app.js",
+  "dependencies": {
+    "dotenv": "^8.2",
+    "express": "^4.17.1",
+    "express-openid-connect": "^1.0.2",
+    "got": "^10.7"
+  },
+  "devDependencies": {
+    "eslint": "^7.1",
+    "faker": "^4.1",
+    "jest": "^25.4",
+    "prettier": "^2.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest",
+    "lint": "eslint",
+    "test:watch": "jest --verbose --watch",
+    "test:coverage": "jest --coverage",
+    "format": "prettier --write ."
+  },
+  "author": "",
+  "license": "MIT"
+}
