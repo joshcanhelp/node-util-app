@@ -1,16 +1,16 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const http = require('http');
-const { auth } = require('express-openid-connect');
+const express = require("express");
+const http = require("http");
+const { auth } = require("express-openid-connect");
 
 const port = process.env.PORT || 3000;
 const baseUrl = `http://localhost:${port}`;
 const auth0Config = {
   required: false,
-  auth0Logout: true,
+  auth0Logout: false,
   appSession: {
-    secret: process.env.APP_SECRET
+    secret: process.env.APP_SECRET,
   },
   baseURL: baseUrl,
   clientID: process.env.CLIENT_ID,
@@ -22,9 +22,16 @@ app.use(express.json());
 app.use(auth(auth0Config));
 
 app.get("/", (req, res, next) => {
+  const logInOut =
+    "<p>You are " +
+    (req.isAuthenticated()
+      ? `Logged in as ${req.openid.user.name}. <a href="/logout">Log out 👉</a>`
+      : 'Logged out. <a href="/login">Log in 👉</a>') +
+    "</p>";
+
   res.send(`
-    Welcome 🙇‍♂️<br>
-    You are ${req.isAuthenticated() ? 'logged in' : 'logged out'}.
+    <p>Welcome 🙇‍♂️</p>
+    ${logInOut}
   `);
 });
 
