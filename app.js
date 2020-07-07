@@ -19,6 +19,7 @@ const auth0Config = {
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded());
 app.use(auth(auth0Config));
 
 app.get("/", (req, res, next) => {
@@ -33,6 +34,11 @@ app.get("/", (req, res, next) => {
     <p>Welcome 🙇‍♂️</p>
     ${logInOut}
   `);
+});
+
+app.get("/redirect-rule", (req, res, next) => {
+  const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}`;
+  res.redirect(302, continueUrl);
 });
 
 http.createServer(app).listen(port, () => {
