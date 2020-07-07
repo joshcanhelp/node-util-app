@@ -38,7 +38,7 @@ app.get("/", (req, res, next) => {
 
 app.get("/redirect-rule", (req, res, next) => {
   const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}`;
-  res.redirect(302, continueUrl);
+  res.send(`<a href="${continueUrl}">Back to Auth0 👉</a>`);
 });
 
 http.createServer(app).listen(port, () => {
