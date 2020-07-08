@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 const baseUrl = `http://localhost:${port}`;
 const auth0Config = {
   required: false,
-  auth0Logout: false,
+  auth0Logout: true,
   appSession: {
     secret: process.env.APP_SECRET,
   },
@@ -37,8 +37,11 @@ app.get("/", (req, res, next) => {
 });
 
 app.get("/redirect-rule", (req, res, next) => {
-  const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}`;
-  res.send(`<a href="${continueUrl}">Back to Auth0 👉</a>`);
+  const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}&works=yes`;
+  res.send(`
+    <p>You came from ${req.get('Referrer')}</p>
+    <p><a href="${continueUrl}">Back to Auth0 👉</a></p>`
+  );
 });
 
 http.createServer(app).listen(port, () => {
