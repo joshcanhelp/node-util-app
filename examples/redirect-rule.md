@@ -13,4 +13,4 @@ function (user, context, callback) {
 }
 ```
 
-With this rule activated, you should see a prompt on your localhost application after authentication but before returning to the app's homepae.
+With this rule activated, you should see a prompt on your localhost application after authentication but before returning to the app's homepage.
