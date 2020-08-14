@@ -31,7 +31,7 @@ app.get("/", (req, res, next) => {
     "</p>";
 
   res.send(`
-    <p>Welcome 🙇‍♂️</p>
+    <p>🙇‍♂️ Welcome</p>
     ${logInOut}
   `);
 });
@@ -39,7 +39,7 @@ app.get("/", (req, res, next) => {
 app.get("/redirect-rule", (req, res, next) => {
   const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}&works=yes`;
   res.send(`
-    <p>You came from ${req.get('Referrer')}</p>
+    <p>👋 You are in the app during a redirect!</p>
     <p><a href="${continueUrl}">Back to Auth0 👉</a></p>`
   );
 });
