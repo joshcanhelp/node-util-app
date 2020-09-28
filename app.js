@@ -1,11 +1,10 @@
 require("dotenv").config();
 
 const express = require("express");
-const http = require("http");
 const { auth } = require("express-openid-connect");
 
-const port = process.env.PORT || 3000;
-const baseUrl = `http://localhost:${port}`;
+const port = process.env.PORT || 3030;
+const baseUrl = process.env.APP_BASE_URL || `http://localhost:${port}`;
 const auth0Config = {
   required: false,
   auth0Logout: true,
@@ -15,11 +14,18 @@ const auth0Config = {
   baseURL: baseUrl,
   clientID: process.env.CLIENT_ID,
   issuerBaseURL: process.env.ISSUER_BASE_URL,
+  handleCallback: function (req, res, next) {
+    if (req.openid._req.openidTokens.id_token) {
+      const tokenBody = req.openid._req.openidTokens.id_token.split(".")[1];
+      console.log(Buffer.from(tokenBody, "base64").toString());
+    }
+    next();
+  },
 };
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(auth(auth0Config));
 
 app.get("/", (req, res, next) => {
@@ -40,10 +46,9 @@ app.get("/redirect-rule", (req, res, next) => {
   const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}&works=yes`;
   res.send(`
     <p>👋 You are in the app during a redirect!</p>
-    <p><a href="${continueUrl}">Back to Auth0 👉</a></p>`
-  );
+    <p><a href="${continueUrl}">Back to Auth0 👉</a></p>`);
 });
 
-http.createServer(app).listen(port, () => {
-  console.log(`Listening at ${baseUrl}`);
+const listener = app.listen(process.env.PORT, () => {
+  console.log("Your app is listening on port " + listener.address().port);
 });
