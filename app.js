@@ -13,15 +13,33 @@ const auth0Config = {
   },
   baseURL: baseUrl,
   clientID: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
   issuerBaseURL: process.env.ISSUER_BASE_URL,
   handleCallback: function (req, res, next) {
     if (req.openid._req.openidTokens.id_token) {
+      console.log("ID token:");
+      console.log(req.openid._req.openidTokens.id_token);
       const tokenBody = req.openid._req.openidTokens.id_token.split(".")[1];
-      console.log(Buffer.from(tokenBody, "base64").toString());
+      console.log(JSON.parse(Buffer.from(tokenBody, "base64").toString()));
+    }
+
+    if (req.openid._req.openidTokens.access_token) {
+      console.log("Access token:");
+      console.log(req.openid._req.openidTokens.access_token);
+      const accessTokenBody = req.openid._req.openidTokens.access_token.split(".")[1];
+      console.log(JSON.parse(Buffer.from(accessTokenBody, "base64").toString()));
     }
     next();
   },
 };
+
+if (process.env.API_AUDIENCE && process.env.API_SCOPES) {
+  auth0Config.authorizationParams = {
+    response_type: 'code',
+    audience: process.env.API_AUDIENCE,
+    scope: `openid email profile ${process.env.API_SCOPES}`
+  }
+}
 
 const app = express();
 app.use(express.json());
