@@ -2,35 +2,18 @@ require("dotenv").config();
 
 const express = require("express");
 const { auth } = require("express-openid-connect");
+const axios = require("axios");
 
 const port = process.env.PORT || 3030;
 const baseUrl = process.env.APP_BASE_URL || `http://localhost:${port}`;
 const auth0Config = {
-  required: false,
+  authRequired: false,
   auth0Logout: true,
-  appSession: {
-    secret: process.env.APP_SECRET,
-  },
+  secret: process.env.SECRET,
   baseURL: baseUrl,
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  issuerBaseURL: process.env.ISSUER_BASE_URL,
-  handleCallback: function (req, res, next) {
-    if (req.openid._req.openidTokens.id_token) {
-      console.log("ID token:");
-      console.log(req.openid._req.openidTokens.id_token);
-      const tokenBody = req.openid._req.openidTokens.id_token.split(".")[1];
-      console.log(JSON.parse(Buffer.from(tokenBody, "base64").toString()));
-    }
-
-    if (req.openid._req.openidTokens.access_token) {
-      console.log("Access token:");
-      console.log(req.openid._req.openidTokens.access_token);
-      const accessTokenBody = req.openid._req.openidTokens.access_token.split(".")[1];
-      console.log(JSON.parse(Buffer.from(accessTokenBody, "base64").toString()));
-    }
-    next();
-  },
+  issuerBaseURL: process.env.ISSUER_BASE_URL
 };
 
 if (process.env.API_AUDIENCE && process.env.API_SCOPES) {
@@ -43,28 +26,66 @@ if (process.env.API_AUDIENCE && process.env.API_SCOPES) {
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(auth(auth0Config));
 
 app.get("/", (req, res, next) => {
-  const logInOut =
-    "<p>You are " +
-    (req.isAuthenticated()
-      ? `Logged in as ${req.openid.user.name}. <a href="/logout">Log out 👉</a>`
-      : 'Logged out. <a href="/login">Log in 👉</a>') +
-    "</p>";
+  const logInOut = req.oidc.isAuthenticated()
+    ? `Logged in as ${req.oidc.user.name}. <a href="/logout">Log out 👉</a>`
+    : 'Logged out. <a href="/login">Log in 👉</a>';
 
   res.send(`
     <p>🙇‍♂️ Welcome</p>
-    ${logInOut}
+    <p>You are ${logInOut}</p>
+    <p><a href="/post-to-wp">Post to WP</a></p>
   `);
 });
 
 app.get("/redirect-rule", (req, res, next) => {
   const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}&works=yes`;
-  res.send(`
-    <p>👋 You are in the app during a redirect!</p>
-    <p><a href="${continueUrl}">Back to Auth0 👉</a></p>`);
+  res.send(
+    `<p>👋 You are in the app during a redirect!</p>
+    <p><a href="${continueUrl}">Back to Auth0 👉</a></p>`
+  );
+});
+
+app.get("/post-to-wp", (req, res, next) => {
+  res.send(
+    `<form method="POST">
+      <p><strong>Title</strong><br><input name="title"></p>
+      <p><strong>Excerpt</strong><br><input name="excerpt"></p>
+      <p><strong>Content</strong><br><textarea name="content"></textarea></p>
+      <p><input type="submit" value="Post"></p>
+    </form>
+    <p><a href="/">Back home</a></p>`
+  );
+});
+
+app.post("/post-to-wp", async (req, res, next) => {
+  let { token_type, isExpired, refresh, access_token } = req.oidc.accessToken;
+  if (isExpired()) {
+    ({ access_token } = await refresh());
+  }
+
+  let apiResponse;
+  try {
+    apiResponse = await axios.post(
+      "http://localhost:8000/wp-json/wp/v2/posts",
+      JSON.stringify(req.body),
+      {
+        headers: {
+          Authorization: `${token_type} ${access_token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  } catch (error) {
+    return res.send("<p>No good</p>");
+  }
+
+  res.send(
+    `<p>Post is published <a href="${apiResponse.data.link}">here</a></p>
+    <p><a href="/post-to-wp">Post another 👉</a></p>`
+  );
 });
 
 const listener = app.listen(process.env.PORT, () => {
