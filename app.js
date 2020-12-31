@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
-const { auth } = require("express-openid-connect");
+const { auth, requiresAuth } = require("express-openid-connect");
 const axios = require("axios");
 
 const port = process.env.PORT || 3030;
@@ -49,15 +49,18 @@ app.get("/redirect-rule", (req, res, next) => {
   );
 });
 
-app.get("/post-to-wp", (req, res, next) => {
+app.get("/post-to-wp", requiresAuth(), (req, res, next) => {
+  if (!process.env.WP_API_CREATE_POST_URL) {
+    return res.send(`Missing WP_API_CREATE_POST_URL env variable.`);
+  }
+
   res.send(
     `<form method="POST">
-      <p><strong>Title</strong><br><input name="title"></p>
-      <p><strong>Excerpt</strong><br><input name="excerpt"></p>
+      <p><strong>Title</strong><br><input name="title" required></p>
       <p><strong>Content</strong><br><textarea name="content"></textarea></p>
       <p><input type="submit" value="Post"></p>
     </form>
-    <p><a href="/">Back home</a></p>`
+    <p><a href="${baseUrl}">Back home</a></p>`
   );
 });
 
@@ -70,8 +73,8 @@ app.post("/post-to-wp", async (req, res, next) => {
   let apiResponse;
   try {
     apiResponse = await axios.post(
-      "http://localhost:8000/wp-json/wp/v2/posts",
-      JSON.stringify(req.body),
+      process.env.WP_API_CREATE_POST_URL,
+      req.body,
       {
         headers: {
           Authorization: `${token_type} ${access_token}`,
@@ -79,11 +82,11 @@ app.post("/post-to-wp", async (req, res, next) => {
         },
       });
   } catch (error) {
-    return res.send("<p>No good</p>");
+    return res.send(`<p>Error creating the post: ${error.message}</p>`);
   }
 
   res.send(
-    `<p>Post is published <a href="${apiResponse.data.link}">here</a></p>
+    `<p>Post is published <a href="${apiResponse.data.link}" target="_blank">here</a></p>
     <p><a href="/post-to-wp">Post another 👉</a></p>`
   );
 });
