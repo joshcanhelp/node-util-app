@@ -50,8 +50,8 @@ app.get("/redirect-rule", (req, res, next) => {
 });
 
 app.get("/post-to-wp", requiresAuth(), (req, res, next) => {
-  if (!process.env.WP_API_CREATE_POST_URL) {
-    return res.send(`Missing WP_API_CREATE_POST_URL env variable.`);
+  if (!process.env.WP_BASE_URL) {
+    return res.send(`Missing WP_BASE_URL env variable.`);
   }
 
   res.send(
@@ -73,7 +73,7 @@ app.post("/post-to-wp", async (req, res, next) => {
   let apiResponse;
   try {
     apiResponse = await axios.post(
-      process.env.WP_API_CREATE_POST_URL,
+      process.env.WP_BASE_URL + "/wp-json/wp/v2/posts",
       req.body,
       {
         headers: {
