@@ -41,6 +41,13 @@ app.get("/", (req, res, next) => {
   `);
 });
 
+app.get("/profile", requiresAuth(), (req, res) => {
+  res.send(`
+    <h1>Current user:</h1>
+    <pre>${JSON.stringify(req.oidc.user, null, 2)}</pre>
+  `);
+});
+
 app.get("/redirect-rule", (req, res, next) => {
   const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}&works=yes`;
   res.send(
