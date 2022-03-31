@@ -4,7 +4,7 @@
     "axios": "^0.21.1",
     "dotenv": "^8.2",
     "express": "^4.17.1",
-    "express-openid-connect": "^2.1.0"
+    "express-openid-connect": "^2.7.2"
   },
   "devDependencies": {
     "eslint": "^7.1",
