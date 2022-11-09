@@ -1,4 +1,4 @@
-# Simple Redirect Rule
+# Simple Redirect Action
 
 First, follow the [Getting Started](https://github.com/joshcanhelp/node-util-app#getting-started) steps in the main repo README to get the Application up and running.
 
