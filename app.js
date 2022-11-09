@@ -89,7 +89,7 @@ app.post("/post-to-wp", async (req, res, next) => {
         },
       });
   } catch (error) {
-    return res.send(`<p>Error creating the post: ${error.message}</p>`);
+    return res.send(`<p>Error creating the post: ${JSON.stringify(error.response.data)}</p>`);
   }
 
   res.send(
