@@ -13,7 +13,7 @@
     "prettier": "^2.0"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "npx nodemon app.js",
     "test": "jest",
     "lint": "eslint",
     "test:watch": "jest --verbose --watch",

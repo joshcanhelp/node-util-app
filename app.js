@@ -2,9 +2,9 @@ require("dotenv").config();
 
 const express = require("express");
 const { auth, requiresAuth } = require("express-openid-connect");
-const axios = require("axios");
 
 const redirectRouter = require("./routes/redirect-from-auth0");
+const wpApiRouter = require("./routes/wp-api");
 
 const port = process.env.PORT || 3030;
 const baseUrl = process.env.APP_BASE_URL || `http://localhost:${port}`;
@@ -32,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(auth(auth0Config));
 
 app.use("/", redirectRouter);
+app.use("/", wpApiRouter);
 
 app.get("/", (req, res, next) => {
   const logInOut = req.oidc.isAuthenticated()
@@ -41,7 +42,9 @@ app.get("/", (req, res, next) => {
   res.send(`
     <p>🙇‍♂️ Welcome</p>
     <p>You are ${logInOut}</p>
-    <p><a href="/post-to-wp">Post to WP</a></p>
+    <ul>
+      <a href="/wp-api">Post to WP</a>
+    </ul>
   `);
 });
 
@@ -50,51 +53,6 @@ app.get("/profile", requiresAuth(), (req, res) => {
     <h1>Current user:</h1>
     <pre>${JSON.stringify(req.oidc.user, null, 2)}</pre>
   `);
-});
-
-app.get("/post-to-wp", requiresAuth(), (req, res, next) => {
-  if (!process.env.WP_BASE_URL) {
-    return res.send(`Missing WP_BASE_URL env variable.`);
-  }
-
-  res.send(
-    `<form method="POST">
-      <p><strong>Title</strong><br><input name="title" required></p>
-      <p><strong>Content</strong><br><textarea name="content"></textarea></p>
-      <p><input type="submit" value="Post"></p>
-    </form>
-    <p><a href="${baseUrl}">Back home</a></p>`
-  );
-});
-
-app.post("/post-to-wp", async (req, res, next) => {
-  let { token_type, isExpired, refresh, access_token } = req.oidc.accessToken;
-  if (isExpired()) {
-    ({ access_token } = await refresh());
-  }
-
-  let apiResponse;
-  try {
-    apiResponse = await axios.post(
-      process.env.WP_BASE_URL + "/wp-json/wp/v2/posts",
-      req.body,
-      {
-        headers: {
-          Authorization: `${token_type} ${access_token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  } catch (error) {
-    return res.send(
-      `<p>Error creating the post: ${JSON.stringify(error.response.data)}</p>`
-    );
-  }
-
-  res.send(
-    `<p>Post is published <a href="${apiResponse.data.link}" target="_blank">here</a></p>
-    <p><a href="/post-to-wp">Post another 👉</a></p>`
-  );
 });
 
 const listener = app.listen(process.env.PORT, () => {
