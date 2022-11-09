@@ -4,6 +4,8 @@ const express = require("express");
 const { auth, requiresAuth } = require("express-openid-connect");
 const axios = require("axios");
 
+const redirectRouter = require("./routes/redirect-from-auth0");
+
 const port = process.env.PORT || 3030;
 const baseUrl = process.env.APP_BASE_URL || `http://localhost:${port}`;
 const auth0Config = {
@@ -13,21 +15,23 @@ const auth0Config = {
   baseURL: baseUrl,
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  issuerBaseURL: process.env.ISSUER_BASE_URL
+  issuerBaseURL: process.env.ISSUER_BASE_URL,
 };
 
 if (process.env.API_AUDIENCE && process.env.API_SCOPES) {
   auth0Config.authorizationParams = {
-    response_type: 'code',
+    response_type: "code",
     audience: process.env.API_AUDIENCE,
-    scope: `openid email profile ${process.env.API_SCOPES}`
-  }
+    scope: `openid email profile ${process.env.API_SCOPES}`,
+  };
 }
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(auth(auth0Config));
+
+app.use("/", redirectRouter);
 
 app.get("/", (req, res, next) => {
   const logInOut = req.oidc.isAuthenticated()
@@ -46,14 +50,6 @@ app.get("/profile", requiresAuth(), (req, res) => {
     <h1>Current user:</h1>
     <pre>${JSON.stringify(req.oidc.user, null, 2)}</pre>
   `);
-});
-
-app.get("/redirect-rule", (req, res, next) => {
-  const continueUrl = `${process.env.ISSUER_BASE_URL}/continue?state=${req.query.state}&works=yes`;
-  res.send(
-    `<p>👋 You are in the app during a redirect!</p>
-    <p><a href="${continueUrl}">Back to Auth0 👉</a></p>`
-  );
 });
 
 app.get("/post-to-wp", requiresAuth(), (req, res, next) => {
@@ -87,9 +83,12 @@ app.post("/post-to-wp", async (req, res, next) => {
           Authorization: `${token_type} ${access_token}`,
           "Content-Type": "application/json",
         },
-      });
+      }
+    );
   } catch (error) {
-    return res.send(`<p>Error creating the post: ${JSON.stringify(error.response.data)}</p>`);
+    return res.send(
+      `<p>Error creating the post: ${JSON.stringify(error.response.data)}</p>`
+    );
   }
 
   res.send(
@@ -99,5 +98,5 @@ app.post("/post-to-wp", async (req, res, next) => {
 });
 
 const listener = app.listen(process.env.PORT, () => {
-  console.log("Your app is listening on port " + listener.address().port);
+  console.log("Your app is running at " + baseUrl);
 });
