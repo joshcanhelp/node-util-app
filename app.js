@@ -6,7 +6,7 @@ const { auth, requiresAuth } = require("express-openid-connect");
 const redirectRouter = require("./routes/redirect-from-auth0");
 const wpApiRouter = require("./routes/wp-api");
 
-const port = process.env.PORT || 3030;
+const port = process.env.PORT || 3000;
 const baseUrl = process.env.APP_BASE_URL || `http://localhost:${port}`;
 const auth0Config = {
   authRequired: false,

@@ -20,7 +20,7 @@ created above.
 ```
 # .env
 
-APP_SECRET=LONG RANDOM STRING
+SECRET=LONG RANDOM STRING
 ISSUER_BASE_URL=https://AUTH0_DOMAIN
 CLIENT_ID=AUTH0_CLIENT_ID
 ```
@@ -31,6 +31,6 @@ app with a **Logout** link.
 The app should be ready to go!
 
 ```bash
-$ node app.js
+$ npm start
 $ open http://localhost:3000
 ```
