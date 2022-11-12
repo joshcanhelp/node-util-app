@@ -6,7 +6,7 @@ const { requiresAuth } = require("express-openid-connect");
 const { WP_BASE_URL, API_AUDIENCE, API_SCOPES } = process.env;
 const postRoute = "/wp-api";
 
-router.get(postRoute, requiresAuth(), (req, res, next) => {
+router.get(postRoute, requiresAuth(), (request, response, next) => {
   if (!WP_BASE_URL) {
     return res.send(`Missing WP_BASE_URL env variable.`);
   }
@@ -42,12 +42,11 @@ router.get(postRoute, requiresAuth(), (req, res, next) => {
   );
 });
 
-router.post(postRoute, requiresAuth(), async (req, res, next) => {
-
+router.post(postRoute, requiresAuth(), async (request, response, next) => {
   if (!req.oidc.accessToken) {
     return res.send(`No access token. <a href="/login">Try logging in</a>`);
   }
-  
+
   let { token_type, isExpired, refresh, access_token } = req.oidc.accessToken;
 
   if (isExpired()) {

@@ -32,7 +32,7 @@ app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
 app.use("/", require("./routes/wp-api"));
 
-app.get("/", (req, res, next) => {
+app.get("/", (request, response, next) => {
   const logInOut = req.oidc.isAuthenticated()
     ? `Logged in as ${req.oidc.user.name}. <a href="/logout">Log out 👉</a>`
     : 'Logged out. <a href="/login">Log in 👉</a>';
