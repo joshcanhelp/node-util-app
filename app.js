@@ -1,10 +1,11 @@
 require("dotenv").config();
 
 const express = require("express");
-const { auth, requiresAuth } = require("express-openid-connect");
+const { auth } = require("express-openid-connect");
 
-const redirectRouter = require("./routes/redirect-from-auth0");
-const wpApiRouter = require("./routes/wp-api");
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const port = process.env.PORT || 3000;
 const baseUrl = process.env.APP_BASE_URL || `http://localhost:${port}`;
@@ -25,14 +26,11 @@ if (process.env.API_AUDIENCE && process.env.API_SCOPES) {
     scope: `openid email profile ${process.env.API_SCOPES}`,
   };
 }
-
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(auth(auth0Config));
 
-app.use("/", redirectRouter);
-app.use("/", wpApiRouter);
+app.use("/", require("./routes/authentication"));
+app.use("/", require("./routes/redirect-from-auth0"));
+app.use("/", require("./routes/wp-api"));
 
 app.get("/", (req, res, next) => {
   const logInOut = req.oidc.isAuthenticated()
@@ -45,13 +43,6 @@ app.get("/", (req, res, next) => {
     <ul>
       <a href="/wp-api">Post to WP</a>
     </ul>
-  `);
-});
-
-app.get("/profile", requiresAuth(), (req, res) => {
-  res.send(`
-    <h1>Current user:</h1>
-    <pre>${JSON.stringify(req.oidc.user, null, 2)}</pre>
   `);
 });
 
