@@ -20,13 +20,28 @@ created above.
 ```
 # .env
 
-SECRET=LONG RANDOM STRING
-ISSUER_BASE_URL=https://AUTH0_DOMAIN
-CLIENT_ID=AUTH0_CLIENT_ID
+SECRET=Long, random string
+ISSUER_BASE_URL=Your Auth0 domain prepended with https://
+CLIENT_ID=The Client ID for this application from Auth0
 ```
 
-Click login, use any identity provider, and you should end up back in your local
-app with a **Logout** link.
+If you are requesting an access token to call an API, also add the following:
+
+```
+# .env
+
+CLIENT_SECRET=The Client Secret for this application from Auth0
+API_AUDIENCE=The API identifier from Auth0
+API_SCOPES=Permissions requested
+```
+
+If you want to [create a post in WordPress](https://github.com/joshcanhelp/node-util-app/tree/master/routes/wp-api), also add the following:
+
+```
+# .env
+
+WP_BASE_URL=Direct URL to a WordPress instance
+```
 
 The app should be ready to go!
 
@@ -34,3 +49,6 @@ The app should be ready to go!
 $ npm start
 $ open http://localhost:3000
 ```
+
+Click login, use any identity provider, and you should end up back in your local
+app with a **Logout** link.
