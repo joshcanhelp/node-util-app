@@ -33,11 +33,11 @@ app.use("/", require("./routes/redirect-from-auth0"));
 app.use("/", require("./routes/wp-api"));
 
 app.get("/", (request, response, next) => {
-  const logInOut = req.oidc.isAuthenticated()
-    ? `Logged in as ${req.oidc.user.name}. <a href="/logout">Log out 👉</a>`
+  const logInOut = request.oidc.isAuthenticated()
+    ? `Logged in as ${request.oidc.user.name}. <a href="/logout">Log out 👉</a>`
     : 'Logged out. <a href="/login">Log in 👉</a>';
 
-  res.send(`
+  response.send(`
     <p>🙇‍♂️ Welcome</p>
     <p>You are ${logInOut}</p>
     <ul>

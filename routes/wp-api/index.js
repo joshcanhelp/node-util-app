@@ -8,24 +8,24 @@ const postRoute = "/wp-api";
 
 router.get(postRoute, requiresAuth(), (request, response, next) => {
   if (!WP_BASE_URL) {
-    return res.send(`Missing WP_BASE_URL env variable.`);
+    return response.send(`Missing WP_BASE_URL env variable.`);
   }
 
   if (!API_AUDIENCE) {
-    return res.send(`Missing API_AUDIENCE env variable.`);
+    return response.send(`Missing API_AUDIENCE env variable.`);
   }
 
   if (!API_SCOPES) {
-    return res.send(`Missing API_SCOPES env variable.`);
+    return response.send(`Missing API_SCOPES env variable.`);
   }
 
-  if (!req.oidc.accessToken) {
-    return res.send(`No access token. <a href="/login">Try logging in</a>`);
+  if (!request.oidc.accessToken) {
+    return response.send(`No access token. <a href="/login">Try logging in</a>`);
   }
 
   const { host } = new URL(API_AUDIENCE);
 
-  res.send(
+  response.send(
     `<p>Posting to <code>${host}</code>
     <form method="POST">
       <p><strong>Title</strong><br><input name="title" required></p>
@@ -43,11 +43,11 @@ router.get(postRoute, requiresAuth(), (request, response, next) => {
 });
 
 router.post(postRoute, requiresAuth(), async (request, response, next) => {
-  if (!req.oidc.accessToken) {
-    return res.send(`No access token. <a href="/login">Try logging in</a>`);
+  if (!request.oidc.accessToken) {
+    return response.send(`No access token. <a href="/login">Try logging in</a>`);
   }
 
-  let { token_type, isExpired, refresh, access_token } = req.oidc.accessToken;
+  let { token_type, isExpired, refresh, access_token } = request.oidc.accessToken;
 
   if (isExpired()) {
     ({ access_token } = await refresh());
@@ -57,7 +57,7 @@ router.post(postRoute, requiresAuth(), async (request, response, next) => {
   try {
     apiResponse = await axios.post(
       WP_BASE_URL + "/wp-json/wp/v2/posts",
-      req.body,
+      request.body,
       {
         headers: {
           Authorization: `${token_type} ${access_token}`,
@@ -66,10 +66,10 @@ router.post(postRoute, requiresAuth(), async (request, response, next) => {
       }
     );
   } catch (error) {
-    return res.json(error.response?.data || error.message);
+    return response.json(error.response?.data || error.message);
   }
 
-  res.send(
+  response.send(
     `<p>Post is published <a href="${apiResponse.data.link}" target="_blank">here</a></p>
     <p><a href="${postRoute}">Post another 👉</a></p>`
   );

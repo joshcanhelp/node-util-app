@@ -6,13 +6,13 @@ router.get("/login", async (request, response) => {
   const loginOptions = {
     returnTo: "/profile",
   };
-  res.oidc.login(loginOptions);
+  response.oidc.login(loginOptions);
 });
 
 router.get("/profile", requiresAuth(), (request, response) => {
-  res.send(`
+  response.send(`
     <h1>Current user:</h1>
-    <pre>${JSON.stringify(req.oidc.user, null, 2)}</pre>
+    <pre>${JSON.stringify(request.oidc.user, null, 2)}</pre>
   `);
 });
 
