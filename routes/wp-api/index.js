@@ -30,7 +30,7 @@ router.get(postRoute, requiresAuth(), (request, response, next) => {
     wpSignUp.pathname = "wp-login.php";
     wpSignUp.search = "action=register";
     return response.send(`
-      <p>No WordPress account found. <a href="">Sign up here</a>
+      <p>No WordPress account found. <a href="${wpSignUp.toString()}">Sign up here</a>
       <p><a href="/">Back home</a></p>
     `);
   }
