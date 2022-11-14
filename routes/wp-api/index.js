@@ -25,6 +25,16 @@ router.get(postRoute, requiresAuth(), (request, response, next) => {
 
   const { host } = new URL(API_AUDIENCE);
 
+  if (request.oidc.user["https://wp/has_account"] !== true) {
+    const wpSignUp = new URL(WP_BASE_URL);
+    wpSignUp.pathname = "wp-login.php";
+    wpSignUp.search = "action=register";
+    return response.send(`
+      <p>No WordPress account found. <a href="">Sign up here</a>
+      <p><a href="/">Back home</a></p>
+    `);
+  }
+
   response.send(
     `<p>Posting to <code>${host}</code>
     <form method="POST">
