@@ -11,8 +11,9 @@ router.get("/login", async (request, response) => {
 
 router.get("/profile", requiresAuth(), (request, response) => {
   response.send(`
-    <h1>Current user:</h1>
+    <h1>Profile</h1>
     <pre>${JSON.stringify(request.oidc.user, null, 2)}</pre>
+    <p><a href="/">Home</a></p>
   `);
 });
 
