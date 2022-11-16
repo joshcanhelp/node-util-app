@@ -23,7 +23,7 @@ router.get(postRoute, requiresAuth(), (request, response, next) => {
     return response.send(`No access token. <a href="/login">Try logging in</a>`);
   }
 
-  const { host } = new URL(API_AUDIENCE);
+  const { host } = new URL(WP_BASE_URL);
 
   if (request.oidc.user["https://wp/has_account"] !== true) {
     const wpSignUp = new URL(WP_BASE_URL);

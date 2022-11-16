@@ -40,8 +40,8 @@ app.get("/", (request, response, next) => {
     <p>You are logged ${isAuthenticated ? `in as ${request.oidc.user.name}` : "out"}</p>
     <ul>
       <li>${isAuthenticated ? '<a href="/logout">Log out</a>' : '<a href="/login">Log in</a>' }</li>
-      ${isAuthenticated && '<li><a href="/profile">Profile</a></li>' }
-      ${process.env.WP_BASE_URL && '<li><a href="/wp-api">Post to WP</a></li>' }
+      ${isAuthenticated ? '<li><a href="/profile">Profile</a></li>' : '' }
+      ${process.env.WP_BASE_URL && isAuthenticated ? '<li><a href="/wp-api">Post to WP</a></li>' : '' }
     </ul>
   `);
 });
