@@ -11,11 +11,12 @@ const { APP_PORT, APP_BASE_URL, HTTPS_PORT, SECRET, CLIENT_ID, CLIENT_SECRET, IS
 
 const port = APP_PORT || 3000;
 const baseUrl = APP_BASE_URL || `http://localhost:${port}`;
+const appUrl = HTTPS_PORT ? baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT) : baseUrl;
 const auth0Config = {
   auth0Logout: true,
   authRequired: false,
   secret: SECRET,
-  baseURL: baseUrl,
+  baseURL: appUrl,
   clientID: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
   issuerBaseURL: ISSUER_BASE_URL,
@@ -57,6 +58,6 @@ app.get("/", (request, response, next) => {
 const listener = app.listen(APP_PORT, () => {
   console.log("Your app is running at " + baseUrl);
   if (HTTPS_PORT) {
-    console.log("Your app is accessible at " + baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT));
+    console.log("Your app is accessible at " + appUrl);
   }
 });
