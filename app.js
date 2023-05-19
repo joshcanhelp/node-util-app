@@ -61,23 +61,40 @@ app.use("/", require("./routes/redirect-from-auth0"));
 app.get("/", (request, response, next) => {
   const isAuthenticated = request.oidc.isAuthenticated();
 
+  const authenticatedLinks = {
+    "/logout": "Log out",
+    "/clear-session": "Clear session",
+    "/profile": "Profile",
+  };
+
+  if (showWpLink) {
+    authenticatedLinks["wp-api"] = "Post to WP";
+  }
+
+  const notAuthenticatedLinks = {
+    "/login": "Log in",
+    "/login?do_redirect=true": "Log in with redirect",
+  };
+
+  const navLinks = isAuthenticated ? authenticatedLinks : notAuthenticatedLinks;
+  navLinks["https://github.com/auth0/express-openid-connect"] =
+    "Express OIDC repo";
+  navLinks["https://auth0.github.io/express-openid-connect/index.html"] =
+    "Express OIDC docs";
+  navLinks["https://github.com/joshcanhelp/node-util-app"] = "This app repo";
+  navLinks[
+    `https://manage.auth0.com/dashboard/us/joshc-test-util-app/applications/${CLIENT_ID}/settings`
+  ] = "Application dashboard";
+
   response.send(`
     <p>🙇‍♂️ Welcome</p>
     <p>You are logged ${
       isAuthenticated ? `in as ${request.oidc.user.name}` : "out"
     }</p>
     <ul>
-      ${
-        isAuthenticated
-          ? '<li><a href="/logout">Log out</a></li>'
-          : '<li><a href="/login">Log in</a></li><li><a href="/login?do_redirect=true">Log in + redirect</a></li>'
-      }
-      ${isAuthenticated ? '<li><a href="/clear-session">Clear app session</a></li><li><a href="/profile">Profile</a></li>' : ""}
-      ${
-        showWpLink && isAuthenticated
-          ? '<li><a href="/wp-api">Post to WP</a></li>'
-          : ""
-      }
+      ${Object.keys(navLinks).reduce((html, href) => {
+        return html + `<li><a href="${href}">${navLinks[href]}</a></li>`;
+      }, "")}
     </ul>
   `);
 });
