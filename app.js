@@ -28,7 +28,7 @@ const appUrl = HTTPS_PORT
 const tenantName = (new URL(ISSUER_BASE_URL)).host.split(".")[0];
 
 const auth0Config = {
-  auth0Logout: true,
+  idpLogout: true,
   authRequired: false,
   secret: SECRET,
   baseURL: appUrl,
@@ -88,7 +88,7 @@ app.get("/", (request, response, next) => {
   ] = "Application dashboard";
 
   response.send(`
-    <p>🙇‍♂️ Welcome</p>
+    <h1>🙇‍♂️ Welcome</h1>
     <p>You are logged ${
       isAuthenticated ? `in as ${request.oidc.user.name}` : "out"
     }</p>
