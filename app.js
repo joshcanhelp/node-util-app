@@ -25,7 +25,7 @@ const baseUrl = APP_BASE_URL || `http://localhost:${port}`;
 const appUrl = HTTPS_PORT
   ? baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT)
   : baseUrl;
-const tenantName = ISSUER_BASE_URL.split(".")[0];
+const tenantName = (new URL(ISSUER_BASE_URL)).host.split(".")[0];
 
 const auth0Config = {
   auth0Logout: true,
