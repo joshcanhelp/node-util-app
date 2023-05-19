@@ -31,8 +31,8 @@ If you are requesting an access token to call an API, also add the following:
 # .env
 
 CLIENT_SECRET=The Client Secret for this application from Auth0
-API_AUDIENCE=The API identifier from Auth0
-API_SCOPES=Permissions requested
+WP_API_AUDIENCE=The API identifier from Auth0
+WP_API_SCOPES=Permissions requested
 ```
 
 If you want to [create a post in WordPress](https://github.com/joshcanhelp/node-util-app/tree/master/routes/wp-api), also add the following:
@@ -40,7 +40,7 @@ If you want to [create a post in WordPress](https://github.com/joshcanhelp/node-
 ```
 # .env
 
-WP_BASE_URL=Direct URL to a WordPress instance
+WP_API_BASE_URL=Direct URL to a WordPress instance
 ```
 
 The app should be ready to go!
@@ -50,5 +50,10 @@ $ npm start
 $ open http://localhost:3000
 ```
 
-Click login, use any identity provider, and you should end up back in your local
-app with a **Logout** link.
+Click login, use any identity provider, and you should end up back in your local app with a **Logout** link.
+
+To provide TLS support, [install Caddy](https://caddyserver.com/docs/install) and run the following in a new CLI tab:
+
+```
+$ npm run caddy
+```

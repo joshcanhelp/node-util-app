@@ -7,30 +7,38 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const port = process.env.PORT || 3000;
-const baseUrl = process.env.APP_BASE_URL || `http://localhost:${port}`;
+const { APP_PORT, APP_BASE_URL, HTTPS_PORT, SECRET, CLIENT_ID, CLIENT_SECRET, ISSUER_BASE_URL, WP_API_AUDIENCE, WP_API_SCOPES, WP_API_BASE_URL } = process.env;
+
+const port = APP_PORT || 3000;
+const baseUrl = APP_BASE_URL || `http://localhost:${port}`;
 const auth0Config = {
-  authRequired: false,
   auth0Logout: true,
-  secret: process.env.SECRET,
+  authRequired: false,
+  secret: SECRET,
   baseURL: baseUrl,
-  clientID: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET,
-  issuerBaseURL: process.env.ISSUER_BASE_URL,
+  clientID: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
+  issuerBaseURL: ISSUER_BASE_URL,
+  authorizationParams: {
+    response_type: "code",
+  }
 };
 
-if (process.env.API_AUDIENCE && process.env.API_SCOPES) {
+let showWpLink = false;
+if (WP_API_AUDIENCE && WP_API_SCOPES && WP_API_BASE_URL) {
   auth0Config.authorizationParams = {
     response_type: "code",
-    audience: process.env.API_AUDIENCE,
-    scope: `openid email profile ${process.env.API_SCOPES}`,
+    audience: WP_API_AUDIENCE,
+    scope: `openid email profile ${WP_API_SCOPES}`,
   };
+  app.use("/", require("./routes/wp-api"));
+  showWpLink = true
 }
+
 app.use(auth(auth0Config));
 
 app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
-app.use("/", require("./routes/wp-api"));
 
 app.get("/", (request, response, next) => {
   const isAuthenticated = request.oidc.isAuthenticated();
@@ -41,11 +49,14 @@ app.get("/", (request, response, next) => {
     <ul>
       <li>${isAuthenticated ? '<a href="/logout">Log out</a>' : '<a href="/login">Log in</a>' }</li>
       ${isAuthenticated ? '<li><a href="/profile">Profile</a></li>' : '' }
-      ${process.env.WP_BASE_URL && isAuthenticated ? '<li><a href="/wp-api">Post to WP</a></li>' : '' }
+      ${showWpLink && isAuthenticated ? '<li><a href="/wp-api">Post to WP</a></li>' : '' }
     </ul>
   `);
 });
 
-const listener = app.listen(process.env.PORT, () => {
+const listener = app.listen(APP_PORT, () => {
   console.log("Your app is running at " + baseUrl);
+  if (HTTPS_PORT) {
+    console.log("Your app is accessible at " + baseUrl.replace(APP_PORT, HTTPS_PORT));
+  }
 });

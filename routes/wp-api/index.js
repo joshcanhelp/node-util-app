@@ -3,30 +3,30 @@ const router = require("express").Router();
 
 const { requiresAuth } = require("express-openid-connect");
 
-const { WP_BASE_URL, API_AUDIENCE, API_SCOPES } = process.env;
+const { WP_API_BASE_URL, WP_API_AUDIENCE, WP_API_SCOPES } = process.env;
 const postRoute = "/wp-api";
 
 router.get(postRoute, requiresAuth(), (request, response, next) => {
-  if (!WP_BASE_URL) {
-    return response.send(`Missing WP_BASE_URL env variable.`);
+  if (!WP_API_BASE_URL) {
+    return response.send(`Missing WP_API_BASE_URL env variable.`);
   }
 
-  if (!API_AUDIENCE) {
-    return response.send(`Missing API_AUDIENCE env variable.`);
+  if (!WP_API_AUDIENCE) {
+    return response.send(`Missing WP_API_AUDIENCE env variable.`);
   }
 
-  if (!API_SCOPES) {
-    return response.send(`Missing API_SCOPES env variable.`);
+  if (!WP_API_SCOPES) {
+    return response.send(`Missing WP_API_SCOPES env variable.`);
   }
 
   if (!request.oidc.accessToken) {
     return response.send(`No access token. <a href="/login">Try logging in</a>`);
   }
 
-  const { host } = new URL(WP_BASE_URL);
+  const { host } = new URL(WP_API_BASE_URL);
 
   if (request.oidc.user["https://wp/has_account"] !== true) {
-    const wpSignUp = new URL(WP_BASE_URL);
+    const wpSignUp = new URL(WP_API_BASE_URL);
     wpSignUp.pathname = "wp-login.php";
     wpSignUp.search = "action=register";
     return response.send(`
@@ -66,7 +66,7 @@ router.post(postRoute, requiresAuth(), async (request, response, next) => {
   let apiResponse;
   try {
     apiResponse = await axios.post(
-      WP_BASE_URL + "/wp-json/wp/v2/posts",
+      WP_API_BASE_URL + "/wp-json/wp/v2/posts",
       request.body,
       {
         headers: {

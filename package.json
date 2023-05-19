@@ -14,6 +14,7 @@
   },
   "scripts": {
     "start": "npx nodemon app.js",
+    "caddy": "caddy run --envfile .env",
     "test": "jest",
     "lint": "eslint",
     "test:watch": "jest --verbose --watch",
