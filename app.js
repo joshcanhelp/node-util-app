@@ -25,6 +25,7 @@ const baseUrl = APP_BASE_URL || `http://localhost:${port}`;
 const appUrl = HTTPS_PORT
   ? baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT)
   : baseUrl;
+const tenantName = ISSUER_BASE_URL.split(".")[0];
 
 const auth0Config = {
   auth0Logout: true,
@@ -83,7 +84,7 @@ app.get("/", (request, response, next) => {
     "Express OIDC docs";
   navLinks["https://github.com/joshcanhelp/node-util-app"] = "This app repo";
   navLinks[
-    `https://manage.auth0.com/dashboard/us/joshc-test-util-app/applications/${CLIENT_ID}/settings`
+    `https://manage.auth0.com/dashboard/us/${tenantName}/applications/${CLIENT_ID}/settings`
   ] = "Application dashboard";
 
   response.send(`
