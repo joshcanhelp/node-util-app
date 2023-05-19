@@ -20,7 +20,9 @@ router.get(postRoute, requiresAuth(), (request, response, next) => {
   }
 
   if (!request.oidc.accessToken) {
-    return response.send(`No access token. <a href="/login">Try logging in</a>`);
+    return response.send(
+      `No access token. <a href="/login">Try logging in</a>`
+    );
   }
 
   const { host } = new URL(WP_API_BASE_URL);
@@ -54,10 +56,17 @@ router.get(postRoute, requiresAuth(), (request, response, next) => {
 
 router.post(postRoute, requiresAuth(), async (request, response, next) => {
   if (!request.oidc.accessToken) {
-    return response.send(`No access token. <a href="/login">Try logging in</a>`);
+    return response.send(
+      `No access token. <a href="/login">Try logging in</a>`
+    );
   }
 
-  let { token_type, isExpired, refresh, access_token } = request.oidc.accessToken;
+  let {
+    token_type,
+    isExpired,
+    refresh,
+    access_token,
+  } = request.oidc.accessToken;
 
   if (isExpired()) {
     ({ access_token } = await refresh());

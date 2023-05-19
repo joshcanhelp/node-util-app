@@ -7,11 +7,24 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const { APP_PORT, APP_BASE_URL, HTTPS_PORT, SECRET, CLIENT_ID, CLIENT_SECRET, ISSUER_BASE_URL, WP_API_AUDIENCE, WP_API_SCOPES, WP_API_BASE_URL } = process.env;
+const {
+  APP_PORT,
+  APP_BASE_URL,
+  HTTPS_PORT,
+  SECRET,
+  CLIENT_ID,
+  CLIENT_SECRET,
+  ISSUER_BASE_URL,
+  WP_API_AUDIENCE,
+  WP_API_SCOPES,
+  WP_API_BASE_URL,
+} = process.env;
 
 const port = APP_PORT || 3000;
 const baseUrl = APP_BASE_URL || `http://localhost:${port}`;
-const appUrl = HTTPS_PORT ? baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT) : baseUrl;
+const appUrl = HTTPS_PORT
+  ? baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT)
+  : baseUrl;
 const auth0Config = {
   auth0Logout: true,
   authRequired: false,
@@ -22,7 +35,7 @@ const auth0Config = {
   issuerBaseURL: ISSUER_BASE_URL,
   authorizationParams: {
     response_type: "code",
-  }
+  },
 };
 
 let showWpLink = false;
@@ -33,7 +46,7 @@ if (WP_API_AUDIENCE && WP_API_SCOPES && WP_API_BASE_URL) {
     scope: `openid email profile ${WP_API_SCOPES}`,
   };
   app.use("/", require("./routes/wp-api"));
-  showWpLink = true
+  showWpLink = true;
 }
 
 app.use(auth(auth0Config));
@@ -46,11 +59,21 @@ app.get("/", (request, response, next) => {
 
   response.send(`
     <p>🙇‍♂️ Welcome</p>
-    <p>You are logged ${isAuthenticated ? `in as ${request.oidc.user.name}` : "out"}</p>
+    <p>You are logged ${
+      isAuthenticated ? `in as ${request.oidc.user.name}` : "out"
+    }</p>
     <ul>
-      <li>${isAuthenticated ? '<a href="/logout">Log out</a>' : '<a href="/login">Log in</a>' }</li>
-      ${isAuthenticated ? '<li><a href="/profile">Profile</a></li>' : '' }
-      ${showWpLink && isAuthenticated ? '<li><a href="/wp-api">Post to WP</a></li>' : '' }
+      <li>${
+        isAuthenticated
+          ? '<a href="/logout">Log out</a>'
+          : '<a href="/login">Log in</a>'
+      }</li>
+      ${isAuthenticated ? '<li><a href="/profile">Profile</a></li>' : ""}
+      ${
+        showWpLink && isAuthenticated
+          ? '<li><a href="/wp-api">Post to WP</a></li>'
+          : ""
+      }
     </ul>
   `);
 });
