@@ -78,6 +78,7 @@ app.get("/", (request, response, next) => {
   };
 
   const navLinks = isAuthenticated ? authenticatedLinks : notAuthenticatedLinks;
+  navLinks["---"] = null;
   navLinks["https://github.com/auth0/express-openid-connect"] =
     "Express OIDC repo";
   navLinks["https://auth0.github.io/express-openid-connect/index.html"] =
@@ -94,7 +95,8 @@ app.get("/", (request, response, next) => {
     }</p>
     <ul>
       ${Object.keys(navLinks).reduce((html, href) => {
-        return html + `<li><a href="${href}">${navLinks[href]}</a></li>`;
+        const template = navLinks[href] ? `<a href="${href}">${navLinks[href]}</a>` : href;
+        return html + `<li>${template}</li>`;
       }, "")}
     </ul>
   `);
