@@ -57,6 +57,6 @@ app.get("/", (request, response, next) => {
 const listener = app.listen(APP_PORT, () => {
   console.log("Your app is running at " + baseUrl);
   if (HTTPS_PORT) {
-    console.log("Your app is accessible at " + baseUrl.replace(APP_PORT, HTTPS_PORT));
+    console.log("Your app is accessible at " + baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT));
   }
 });
