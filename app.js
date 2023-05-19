@@ -25,6 +25,7 @@ const baseUrl = APP_BASE_URL || `http://localhost:${port}`;
 const appUrl = HTTPS_PORT
   ? baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT)
   : baseUrl;
+
 const auth0Config = {
   auth0Logout: true,
   authRequired: false,
@@ -33,6 +34,9 @@ const auth0Config = {
   clientID: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
   issuerBaseURL: ISSUER_BASE_URL,
+  routes: {
+    login: false,
+  },
   authorizationParams: {
     response_type: "code",
   },
@@ -63,12 +67,12 @@ app.get("/", (request, response, next) => {
       isAuthenticated ? `in as ${request.oidc.user.name}` : "out"
     }</p>
     <ul>
-      <li>${
+      ${
         isAuthenticated
-          ? '<a href="/logout">Log out</a>'
-          : '<a href="/login">Log in</a>'
-      }</li>
-      ${isAuthenticated ? '<li><a href="/profile">Profile</a></li>' : ""}
+          ? '<li><a href="/logout">Log out</a></li>'
+          : '<li><a href="/login">Log in</a></li><li><a href="/login?do_redirect=true">Log in + redirect</a></li>'
+      }
+      ${isAuthenticated ? '<li><a href="/clear-session">Clear app session</a></li><li><a href="/profile">Profile</a></li>' : ""}
       ${
         showWpLink && isAuthenticated
           ? '<li><a href="/wp-api">Post to WP</a></li>'
@@ -78,7 +82,7 @@ app.get("/", (request, response, next) => {
   `);
 });
 
-const listener = app.listen(APP_PORT, () => {
+app.listen(APP_PORT, () => {
   console.log("Your app is running at " + baseUrl);
   if (HTTPS_PORT) {
     console.log("Your app is accessible at " + appUrl);
