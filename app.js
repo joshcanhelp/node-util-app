@@ -62,17 +62,19 @@ app.get("/test", (request, response) => {
 
 app.get("/", (request, response, next) => {
   response.sendTemplate("Home", `
-    <h2>User Identity</h2>
+    <h2>ID Token</h2>
     ${
-      request.oidc.user ? 
-        `<pre>${JSON.stringify(request.oidc.user, null, 2)}</pre>` : 
-        "No identity found!"
+      request.oidc.user ? `
+      <p><a href="https://jwt.io/#debugger-io?token=${request.oidc.idToken}">jwt.io &rsaquo;</a></p>
+      <pre>${JSON.stringify(request.oidc.idTokenClaims, null, 2)}</pre>
+      ` : "No identity found!"
     }
     <h2>Access Token</h2>
     ${
-      request.oidc.accessToken ?
-        `<pre>${JSON.stringify(request.oidc.accessToken, null, 2)}</pre>` : 
-        "No access token found!"
+      request.oidc.accessToken ? `
+        <p><a href="https://jwt.io/#debugger-io?token=${request.oidc.accessToken.access_token}">jwt.io &rsaquo;</a></p>
+        <pre>${JSON.stringify(request.oidc.accessToken, null, 2)}</pre>
+        ` : "No access token found!"
     }
   `);
 });

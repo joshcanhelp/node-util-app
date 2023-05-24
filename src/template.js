@@ -2,10 +2,7 @@ const { getDashboardUrl } = require("./utils");
 
 const {
   CLIENT_ID,
-  ISSUER_BASE_URL,
 } = process.env;
-
-const tenantName = new URL(ISSUER_BASE_URL).host.split(".")[0];
 
 const getHeader = (request, title) => `
 <!DOCTYPE html>
@@ -19,7 +16,7 @@ const getHeader = (request, title) => `
       
       body { padding: 2% }
       hr { border: none; border-top: 1px solid #ddd }
-      pre { display: block; max-width: 100%; overflow-wrap: break-word; white-space: normal; }
+      pre { overflow-wrap: break-word; white-space: break-spaces; padding: 1%; background: #f1f1f1 }
     </style>
   </head>
   <body>
