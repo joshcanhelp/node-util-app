@@ -6,13 +6,11 @@ const router = require("express").Router();
 const { CLIENT_ID } = process.env;
 
 router.get("/login", async (request, response) => {
-  response.send(`
-  <h1>Login</h1>
-  <p><a href="/">&lsaquo; Home</a></p>
+  response.sendTemplate("Login", `
   <form method="post">
     <p>
       <strong><label>Return to application path</label></strong><br>
-      <input type="text" name="return_to" value="/profile">
+      <input type="text" name="return_to" value="/">
     </p>
     <p>
       <label>
@@ -35,9 +33,10 @@ router.post("/login", async (request, response) => {
 });
 
 router.get("/logout", async (request, response) => {
-  response.send(`
-  <h1>Logout</h1>
-  <p><a href="/">&lsaquo; Home</a></p>
+  response.sendTemplate("Logout", `
+  <form method="post" action="clear-session">
+    <p><input type="submit" value="Clear session"></p>
+  </form>
   <form method="post">
     <p>
       <strong><label>Return to URL</label></strong><br>
@@ -68,25 +67,9 @@ router.post("/logout", async (request, response) => {
   });
 });
 
-router.get("/clear-session", async (request, response) => {
+router.post("/clear-session", async (request, response) => {
   request.appSession = undefined;
   response.redirect("/");
-});
-
-router.get("/profile", requiresAuth(), (request, response) => {
-  response.send(`
-    <h1>Profile</h1>
-    <p><a href="/">&lsaquo; Home</a></p>
-    <h2>User identity</h2>
-    <pre>${JSON.stringify(request.oidc.user, null, 2)}</pre>
-    ${
-      request.oidc.accessToken &&
-      `
-      <h2>Access Token</h2>
-      <pre>${JSON.stringify(request.oidc.accessToken, null, 2)}</pre>
-    `
-    }
-  `);
 });
 
 module.exports = router;

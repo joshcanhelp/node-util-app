@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const { auth } = require("express-openid-connect");
 const { getAppUrl, getAppPort, getBaseUrl } = require("./src/utils");
+const { getHeader, getFooter } = require("./src/template");
 
 const app = express();
 app.use(express.json());
@@ -17,8 +18,6 @@ const {
   WP_API_SCOPES,
   WP_API_BASE_URL,
 } = process.env;
-
-const tenantName = new URL(ISSUER_BASE_URL).host.split(".")[0];
 
 const auth0Config = {
   idpLogout: true,
@@ -49,55 +48,32 @@ if (WP_API_AUDIENCE && WP_API_SCOPES && WP_API_BASE_URL) {
 }
 
 app.use(auth(auth0Config));
+app.use(((request, response, next) => {
+  response.sendTemplate = (title, html) => response.send(getHeader(request, title) + html + getFooter());
+  next();
+}));
 
 app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
 
 app.get("/test", (request, response) => {
-  response.send("OK");
+  response.sendTemplate("OK");
 });
 
 app.get("/", (request, response, next) => {
-  const isAuthenticated = request.oidc.isAuthenticated();
-
-  const authenticatedLinks = {
-    "/logout": "Log out",
-    "/profile": "Profile",
-  };
-
-  if (showWpLink) {
-    authenticatedLinks["wp-api"] = "Post to WP";
-  }
-
-  const notAuthenticatedLinks = {
-    "/login": "Log in",
-  };
-
-  const navLinks = isAuthenticated ? authenticatedLinks : notAuthenticatedLinks;
-  navLinks["/test"] = "Test page";
-  navLinks["---"] = null;
-  navLinks["https://github.com/auth0/express-openid-connect"] =
-    "Express OIDC repo";
-  navLinks["https://auth0.github.io/express-openid-connect/index.html"] =
-    "Express OIDC docs";
-  navLinks["https://github.com/joshcanhelp/node-util-app"] = "This app repo";
-  navLinks[
-    `https://manage.auth0.com/dashboard/us/${tenantName}/applications/${CLIENT_ID}/settings`
-  ] = "Application dashboard";
-
-  response.send(`
-    <h1>🙇‍♂️ Welcome</h1>
-    <p>You are logged ${
-      isAuthenticated ? `in as ${request.oidc.user.name}` : "out"
-    }</p>
-    <ul>
-      ${Object.keys(navLinks).reduce((html, href) => {
-        const template = navLinks[href]
-          ? `<a href="${href}">${navLinks[href]}</a>`
-          : href;
-        return html + `<li>${template}</li>`;
-      }, "")}
-    </ul>
+  response.sendTemplate("Home", `
+    <h2>User Identity</h2>
+    ${
+      request.oidc.user ? 
+        `<pre>${JSON.stringify(request.oidc.user, null, 2)}</pre>` : 
+        "No identity found!"
+    }
+    <h2>Access Token</h2>
+    ${
+      request.oidc.accessToken ?
+        `<pre>${JSON.stringify(request.oidc.accessToken, null, 2)}</pre>` : 
+        "No access token found!"
+    }
   `);
 });
 
