@@ -1,8 +1,6 @@
 const { getDashboardUrl } = require("./utils");
 
-const {
-  CLIENT_ID,
-} = process.env;
+const { CLIENT_ID } = process.env;
 
 const getHeader = (request, title) => `
 <!DOCTYPE html>
@@ -16,7 +14,8 @@ const getHeader = (request, title) => `
       
       body { 
         padding: 2%; 
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, 
+          Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         line-height: 1.5em;
       }
       hr { border: none; border-top: 1px solid #ddd; margin: 1.5em 0 }
@@ -30,21 +29,21 @@ const getHeader = (request, title) => `
     <h1>${title}</h1>
     <p>
       ${
-        request.oidc.isAuthenticated() ? 
-          `<span class="green login-status">&bull;</span> Logged in as ${request.oidc.user.name}` : 
-          '<span class="red login-status">&bull;</span> Logged out'
+        request.oidc.isAuthenticated()
+          ? `<span class="green login-status">&bull;</span> Logged in as ${request.oidc.user.name}`
+          : '<span class="red login-status">&bull;</span> Logged out'
       }
     </p>
     <nav>
       <a href="/">&lsaquo; Home</a> 
       ${
-        request.oidc.isAuthenticated() ? 
-          `<a href="/logout">Logout</a>` : 
-          `<a href="/login">Login</a>`
+        request.oidc.isAuthenticated()
+          ? `<a href="/logout">Logout</a>`
+          : `<a href="/login">Login</a>`
       }
     </nav>
     <hr>
-`
+`;
 
 const getFooter = () => `
     <hr>
@@ -60,9 +59,9 @@ const getFooter = () => `
     </footer>
   </body>
 </html>
-`
+`;
 
 module.exports = {
   getHeader,
-  getFooter
-}
+  getFooter,
+};

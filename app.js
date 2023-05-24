@@ -48,10 +48,11 @@ if (WP_API_AUDIENCE && WP_API_SCOPES && WP_API_BASE_URL) {
 }
 
 app.use(auth(auth0Config));
-app.use(((request, response, next) => {
-  response.sendTemplate = (title, html) => response.send(getHeader(request, title) + html + getFooter());
+app.use((request, response, next) => {
+  response.sendTemplate = (title, html) =>
+    response.send(getHeader(request, title) + html + getFooter());
   next();
-}));
+});
 
 app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
@@ -61,22 +62,33 @@ app.get("/test", (request, response) => {
 });
 
 app.get("/", (request, response, next) => {
-  response.sendTemplate("Home", `
+  response.sendTemplate(
+    "Home",
+    `
     <h2>ID Token</h2>
     ${
-      request.oidc.user ? `
-      <p><a href="https://jwt.io/#debugger-io?token=${request.oidc.idToken}">jwt.io &rsaquo;</a></p>
+      request.oidc.user
+        ? `
+      <p><a href="https://jwt.io/#debugger-io?token=${
+        request.oidc.idToken
+      }">jwt.io &rsaquo;</a></p>
       <pre>${JSON.stringify(request.oidc.idTokenClaims, null, 2)}</pre>
-      ` : "No identity found!"
+      `
+        : "No identity found!"
     }
     <h2>Access Token</h2>
     ${
-      request.oidc.accessToken ? `
-        <p><a href="https://jwt.io/#debugger-io?token=${request.oidc.accessToken.access_token}">jwt.io &rsaquo;</a></p>
+      request.oidc.accessToken
+        ? `
+        <p><a href="https://jwt.io/#debugger-io?token=${
+          request.oidc.accessToken.access_token
+        }">jwt.io &rsaquo;</a></p>
         <pre>${JSON.stringify(request.oidc.accessToken, null, 2)}</pre>
-        ` : "No access token found!"
+        `
+        : "No access token found!"
     }
-  `);
+  `
+  );
 });
 
 app.listen(getAppPort(), () => {

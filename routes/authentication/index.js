@@ -6,7 +6,9 @@ const router = require("express").Router();
 const { CLIENT_ID } = process.env;
 
 router.get("/login", async (request, response) => {
-  response.sendTemplate("Login", `
+  response.sendTemplate(
+    "Login",
+    `
   <form method="post">
     <p>
       <strong><label>Return to application path</label></strong><br>
@@ -20,7 +22,8 @@ router.get("/login", async (request, response) => {
     </p>
     <p><input type="submit" value="Login"></p>
     </form>
-    `);
+    `
+  );
 });
 
 router.post("/login", async (request, response) => {
@@ -33,7 +36,9 @@ router.post("/login", async (request, response) => {
 });
 
 router.get("/logout", async (request, response) => {
-  response.sendTemplate("Logout", `
+  response.sendTemplate(
+    "Logout",
+    `
   <form method="post" action="clear-session">
     <p><input type="submit" value="Clear session"></p>
   </form>
@@ -54,7 +59,8 @@ router.get("/logout", async (request, response) => {
     </p>
     <p><input type="submit" value="Logout"></p>
   </form>
-  `);
+  `
+  );
 });
 
 router.post("/logout", async (request, response) => {
