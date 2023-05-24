@@ -14,9 +14,16 @@ const getHeader = (request, title) => `
       .green { color: green }
       .red { color: red }
       
-      body { padding: 2% }
+      body { 
+        padding: 2%; 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        line-height: 1.5em;
+      }
       hr { border: none; border-top: 1px solid #ddd; margin: 1.5em 0 }
       pre { overflow-wrap: break-word; white-space: break-spaces; padding: 1%; background: #f1f1f1 }
+      label { font-size: 1em }
+      input[type=text] { border: 1px solid #ddd; font-size: 1em; padding: 0.25em; max-width: 100%; width: 40em }
+      input[type=submit] { font-size: 1.1em; padding: 0.5em; border-radius: 5px; border: none; cursor: pointer; background: #635DFF; color: white }
     </style>
   </head>
   <body>
