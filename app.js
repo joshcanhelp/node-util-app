@@ -14,9 +14,6 @@ const {
   CLIENT_ID,
   CLIENT_SECRET,
   ISSUER_BASE_URL,
-  WP_API_AUDIENCE,
-  WP_API_SCOPES,
-  WP_API_BASE_URL,
 } = process.env;
 
 const auth0Config = {
@@ -33,19 +30,9 @@ const auth0Config = {
   },
   authorizationParams: {
     response_type: "code",
+    scope: "openid email profile"
   },
 };
-
-let showWpLink = false;
-if (WP_API_AUDIENCE && WP_API_SCOPES && WP_API_BASE_URL) {
-  auth0Config.authorizationParams = {
-    response_type: "code",
-    audience: WP_API_AUDIENCE,
-    scope: `openid email profile ${WP_API_SCOPES}`,
-  };
-  app.use("/", require("./routes/wp-api"));
-  showWpLink = true;
-}
 
 app.use(auth(auth0Config));
 app.use((request, response, next) => {
@@ -58,6 +45,7 @@ app.use((request, response, next) => {
 
 app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
+app.use("/", require("./routes/wp-api"));
 
 app.get("/test", (request, response) => {
   response.sendTemplate("OK");

@@ -5,23 +5,40 @@ const { requiresAuth } = require("express-openid-connect");
 
 const { WP_API_BASE_URL, WP_API_AUDIENCE, WP_API_SCOPES } = process.env;
 const postRoute = "/wp-api";
+const pageTitle = "WP API";
 
 router.get(postRoute, requiresAuth(), (request, response, next) => {
+  const errors = [];
   if (!WP_API_BASE_URL) {
-    return response.send(`Missing WP_API_BASE_URL env variable.`);
+    errors.push(`Missing WP_API_BASE_URL env variable.`);
   }
 
   if (!WP_API_AUDIENCE) {
-    return response.send(`Missing WP_API_AUDIENCE env variable.`);
+    errors.push(`Missing WP_API_AUDIENCE env variable.`);
   }
 
   if (!WP_API_SCOPES) {
-    return response.send(`Missing WP_API_SCOPES env variable.`);
+    errors.push(`Missing WP_API_SCOPES env variable.`);
   }
 
   if (!request.oidc.accessToken) {
-    return response.send(
-      `No access token. <a href="/login">Try logging in</a>`
+    errors.push(`No access token. <a href="/login">Try logging in</a>`);
+  }
+
+  try {
+    new URL(WP_API_BASE_URL);
+  } catch {
+    errors.push(`Invalid WP_API_BASE_URL: "${WP_API_BASE_URL}"`);
+  }
+
+  if (errors.length) {
+    return response.sendTemplate(
+      pageTitle,
+      "<ul>" +
+        errors.reduce((acc, error) => {
+          return `${acc} <li class="red">${error}</li>`;
+        }, "") +
+        "</ul>"
     );
   }
 
@@ -31,26 +48,26 @@ router.get(postRoute, requiresAuth(), (request, response, next) => {
     const wpSignUp = new URL(WP_API_BASE_URL);
     wpSignUp.pathname = "wp-login.php";
     wpSignUp.search = "action=register";
-    return response.send(`
-      <p>No WordPress account found. <a href="${wpSignUp.toString()}">Sign up here</a>
-      <p><a href="/">Back home</a></p>
-    `);
+    return response.sendTemplate(
+      pageTitle,
+      `<p><strong>No WordPress account found.</strong> <a href="${wpSignUp.toString()}">Sign up here &rsaquo;</a>`
+    );
   }
 
-  response.send(
+  response.sendTemplate(
+    pageTitle,
     `<p>Posting to <code>${host}</code>
-    <form method="POST">
-      <p><strong>Title</strong><br><input name="title" required></p>
+    <form method="post">
+      <p><strong>Title</strong><br><input type="text" name="title" required></p>
       <p><strong>Content</strong><br><textarea name="content"></textarea></p>
       <p><strong>Status</strong><br>
         <input type="radio" name="status" value="publish" id="wp_status_publish" checked />
-        <label for="wp_status_publish">Publish</label>
+        <label for="wp_status_publish">Publish</label>&nbsp;&nbsp;
         <input type="radio" name="status" value="draft" id="wp_status_draft" />
         <label for="wp_status_draft">Draft</label>
       </p>
       <p><input type="submit" value="Post"></p>
-    </form>
-    <p><a href="/">Back home</a></p>`
+    </form>`
   );
 });
 

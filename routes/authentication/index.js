@@ -3,7 +3,9 @@ const { getAppUrl } = require("../../src/utils");
 
 const router = require("express").Router();
 
-const { CLIENT_ID } = process.env;
+const { CLIENT_ID, WP_API_AUDIENCE,
+  WP_API_SCOPES,
+  WP_API_BASE_URL } = process.env;
 
 router.get("/login", async (request, response) => {
   response.sendTemplate(
@@ -11,8 +13,22 @@ router.get("/login", async (request, response) => {
     `
   <form method="post">
     <p>
-      <strong><label>Return to application path</label></strong><br>
+      <strong><label>Return to application path</label></strong>
       <input type="text" name="return_to" value="/">
+    </p>
+    <p>
+      <strong><label>Response type</label></strong>
+      <input type="text" name="response_type" value="code">
+    </p>
+    <p>
+      <strong><label>Audience</label></strong>
+      <input type="text" name="audience" value="">
+      ${WP_API_AUDIENCE && `Found <code>${WP_API_AUDIENCE}</code>`}
+    </p>
+    <p>
+      <strong><label>Scope</label></strong>
+      <input type="text" name="scope" value="openid email profile">
+      ${WP_API_SCOPES && `Found <code>${WP_API_SCOPES}</code>`}
     </p>
     <p>
       <label>
@@ -27,12 +43,25 @@ router.get("/login", async (request, response) => {
 });
 
 router.post("/login", async (request, response) => {
-  response.oidc.login({
-    returnTo: request.body.return_to || "/profile",
+  const loginOptions = {
+    returnTo: request.body.return_to,
     authorizationParams: {
       do_redirect: request.body.do_redirect,
+      response_type: request.body.response_type,
+      audience: request.body.audience,
+      scope: request.body.scope,
     },
-  });
+  };
+
+  if (request.query.do_wp === "true") {
+    loginOptions.authorizationParams = {
+      response_type: "code",
+      audience: WP_API_AUDIENCE,
+      scope: `openid email profile ${WP_API_SCOPES}`,
+    };
+  }
+
+  response.oidc.login(loginOptions);
 });
 
 router.get("/logout", async (request, response) => {
