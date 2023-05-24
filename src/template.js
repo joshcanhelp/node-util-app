@@ -15,7 +15,7 @@ const getHeader = (request, title) => `
       .red { color: red }
       
       body { padding: 2% }
-      hr { border: none; border-top: 1px solid #ddd }
+      hr { border: none; border-top: 1px solid #ddd; margin: 1.5em 0 }
       pre { overflow-wrap: break-word; white-space: break-spaces; padding: 1%; background: #f1f1f1 }
     </style>
   </head>
