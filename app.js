@@ -2,15 +2,13 @@ require("dotenv").config();
 
 const express = require("express");
 const { auth } = require("express-openid-connect");
+const { getAppUrl, getAppPort, getBaseUrl } = require("./src/utils");
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const {
-  APP_PORT,
-  APP_BASE_URL,
-  HTTPS_PORT,
   SECRET,
   CLIENT_ID,
   CLIENT_SECRET,
@@ -20,23 +18,19 @@ const {
   WP_API_BASE_URL,
 } = process.env;
 
-const port = APP_PORT || 3000;
-const baseUrl = APP_BASE_URL || `http://localhost:${port}`;
-const appUrl = HTTPS_PORT
-  ? baseUrl.replace("http://", "https://").replace(APP_PORT, HTTPS_PORT)
-  : baseUrl;
-const tenantName = (new URL(ISSUER_BASE_URL)).host.split(".")[0];
+const tenantName = new URL(ISSUER_BASE_URL).host.split(".")[0];
 
 const auth0Config = {
   idpLogout: true,
   authRequired: false,
   secret: SECRET,
-  baseURL: appUrl,
+  baseURL: getAppUrl(),
   clientID: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
   issuerBaseURL: ISSUER_BASE_URL,
   routes: {
     login: false,
+    logout: false,
   },
   authorizationParams: {
     response_type: "code",
@@ -59,12 +53,15 @@ app.use(auth(auth0Config));
 app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
 
+app.get("/test", (request, response) => {
+  response.send("OK");
+});
+
 app.get("/", (request, response, next) => {
   const isAuthenticated = request.oidc.isAuthenticated();
 
   const authenticatedLinks = {
     "/logout": "Log out",
-    "/clear-session": "Clear session",
     "/profile": "Profile",
   };
 
@@ -74,10 +71,10 @@ app.get("/", (request, response, next) => {
 
   const notAuthenticatedLinks = {
     "/login": "Log in",
-    "/login?do_redirect=true": "Log in with redirect",
   };
 
   const navLinks = isAuthenticated ? authenticatedLinks : notAuthenticatedLinks;
+  navLinks["/test"] = "Test page";
   navLinks["---"] = null;
   navLinks["https://github.com/auth0/express-openid-connect"] =
     "Express OIDC repo";
@@ -95,16 +92,18 @@ app.get("/", (request, response, next) => {
     }</p>
     <ul>
       ${Object.keys(navLinks).reduce((html, href) => {
-        const template = navLinks[href] ? `<a href="${href}">${navLinks[href]}</a>` : href;
+        const template = navLinks[href]
+          ? `<a href="${href}">${navLinks[href]}</a>`
+          : href;
         return html + `<li>${template}</li>`;
       }, "")}
     </ul>
   `);
 });
 
-app.listen(APP_PORT, () => {
-  console.log("Your app is running at " + baseUrl);
-  if (HTTPS_PORT) {
-    console.log("Your app is accessible at " + appUrl);
+app.listen(getAppPort(), () => {
+  console.log("Your app is running at " + getBaseUrl());
+  if (getBaseUrl() !== getAppUrl()) {
+    console.log("Your app is accessible at " + getAppUrl());
   }
 });
