@@ -3,9 +3,12 @@ const { getAppUrl } = require("../../src/utils");
 
 const router = require("express").Router();
 
-const { CLIENT_ID, WP_API_AUDIENCE,
+const {
+  CLIENT_ID,
+  WP_API_AUDIENCE,
   WP_API_SCOPES,
-  WP_API_BASE_URL } = process.env;
+  WP_API_BASE_URL,
+} = process.env;
 
 router.get("/login", async (request, response) => {
   response.sendTemplate(
@@ -21,14 +24,20 @@ router.get("/login", async (request, response) => {
       <input type="text" name="response_type" value="code">
     </p>
     <p>
-      <strong><label>Audience</label></strong>
-      <input type="text" name="audience" value="">
-      ${WP_API_AUDIENCE && `Found <code>${WP_API_AUDIENCE}</code>`}
+      <strong><label for="login-audience">Audience</label></strong>
+      <input type="text" id="login-audience" name="audience" value="">
+      ${
+        WP_API_AUDIENCE &&
+        `Found <code data-input-replace="login-audience">${WP_API_AUDIENCE}</code>`
+      }
     </p>
     <p>
-      <strong><label>Scope</label></strong>
-      <input type="text" name="scope" value="openid email profile">
-      ${WP_API_SCOPES && `Found <code>${WP_API_SCOPES}</code>`}
+      <strong><label for="login-scope">Scope</label></strong>
+      <input type="text" id="login-scope" name="scope" value="openid email profile">
+      ${
+        WP_API_SCOPES &&
+        `Found <code data-input-update="login-scope">${WP_API_SCOPES}</code>`
+      }
     </p>
     <p>
       <label>

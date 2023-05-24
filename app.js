@@ -9,12 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const {
-  SECRET,
-  CLIENT_ID,
-  CLIENT_SECRET,
-  ISSUER_BASE_URL,
-} = process.env;
+const { SECRET, CLIENT_ID, CLIENT_SECRET, ISSUER_BASE_URL } = process.env;
 
 const auth0Config = {
   idpLogout: true,
@@ -30,7 +25,7 @@ const auth0Config = {
   },
   authorizationParams: {
     response_type: "code",
-    scope: "openid email profile"
+    scope: "openid email profile",
   },
 };
 
@@ -42,6 +37,7 @@ app.use((request, response, next) => {
     );
   next();
 });
+app.use(express.static("public"));
 
 app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
