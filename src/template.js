@@ -2,6 +2,9 @@ const { getDashboardUrl } = require("./utils");
 
 const { CLIENT_ID } = process.env;
 
+const jwtIoLink = (token) =>
+  `<a href="https://jwt.io/#debugger-io?token=${token}">jwt.io &rsaquo;</a>`;
+
 const getHeader = (request, title) => `
 <!DOCTYPE html>
 <html lang="en">
@@ -64,4 +67,5 @@ const getFooter = () => `
 module.exports = {
   getHeader,
   getFooter,
+  jwtIoLink,
 };

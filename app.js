@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const { auth } = require("express-openid-connect");
 const { getAppUrl, getAppPort, getBaseUrl } = require("./src/utils");
-const { getHeader, getFooter } = require("./src/template");
+const { getHeader, getFooter, jwtIoLink } = require("./src/template");
 
 const app = express();
 app.use(express.json());
@@ -50,7 +50,9 @@ if (WP_API_AUDIENCE && WP_API_SCOPES && WP_API_BASE_URL) {
 app.use(auth(auth0Config));
 app.use((request, response, next) => {
   response.sendTemplate = (title, html) =>
-    response.send(getHeader(request, title) + ( html || "<h2>🤖</h2>" ) + getFooter());
+    response.send(
+      getHeader(request, title) + (html || "<h2>🤖</h2>") + getFooter()
+    );
   next();
 });
 
@@ -67,24 +69,20 @@ app.get("/", (request, response, next) => {
     `
     <h2>ID Token</h2>
     ${
-      request.oidc.user
-        ? `
-      <p><a href="https://jwt.io/#debugger-io?token=${
-        request.oidc.idToken
-      }">jwt.io &rsaquo;</a></p>
-      <pre>${JSON.stringify(request.oidc.idTokenClaims, null, 2)}</pre>
-      `
+      request.oidc.idToken
+        ? `<p>${jwtIoLink(request.oidc.idToken)}</p><pre>${JSON.stringify(
+            request.oidc.idTokenClaims,
+            null,
+            2
+          )}</pre>`
         : "No identity found!"
     }
     <h2>Access Token</h2>
     ${
       request.oidc.accessToken
-        ? `
-        <p><a href="https://jwt.io/#debugger-io?token=${
-          request.oidc.accessToken.access_token
-        }">jwt.io &rsaquo;</a></p>
-        <pre>${JSON.stringify(request.oidc.accessToken, null, 2)}</pre>
-        `
+        ? `<p>${jwtIoLink(
+            request.oidc.accessToken.access_token
+          )}</p><pre>${JSON.stringify(request.oidc.accessToken, null, 2)}</pre>`
         : "No access token found!"
     }
   `
