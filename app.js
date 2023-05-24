@@ -50,7 +50,7 @@ if (WP_API_AUDIENCE && WP_API_SCOPES && WP_API_BASE_URL) {
 app.use(auth(auth0Config));
 app.use((request, response, next) => {
   response.sendTemplate = (title, html) =>
-    response.send(getHeader(request, title) + html + getFooter());
+    response.send(getHeader(request, title) + ( html || "<h2>🤖</h2>" ) + getFooter());
   next();
 });
 
