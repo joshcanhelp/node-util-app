@@ -1,0 +1,9 @@
+{
+  "verbose": true,
+  "watch": [
+    ".env",
+    "routes/",
+    "source/",
+    "app.js"
+  ]
+}
