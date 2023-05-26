@@ -16,10 +16,13 @@ const getDashboardUrl = (path = "") => {
   return dashboard + path.replace(/^(\/)/, "");
 };
 
+const nowInSeconds = () => Math.round(new Date().getTime() / 1000);
+
 module.exports = {
   getAppPort,
   getAppUrl,
   getBaseUrl,
   getDashboardUrl,
   getTenantName,
+  nowInSeconds,
 };

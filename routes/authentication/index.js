@@ -1,14 +1,8 @@
-const { requiresAuth } = require("express-openid-connect");
 const { getAppUrl } = require("../../src/utils");
 
 const router = require("express").Router();
 
-const {
-  CLIENT_ID,
-  WP_API_AUDIENCE,
-  WP_API_SCOPES,
-  WP_API_BASE_URL,
-} = process.env;
+const { CLIENT_ID, WP_API_AUDIENCE, WP_API_SCOPES } = process.env;
 
 router.get("/login", async (request, response) => {
   response.sendTemplate(

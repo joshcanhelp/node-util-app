@@ -10,7 +10,7 @@ body {
 }
 
 p {
-  margin: 1em 0;
+  margin: 1.5em 0;
 }
 
 hr {
@@ -37,6 +37,8 @@ label {
 }
 
 input[type=text],
+input[type=password],
+input[type=url],
 textarea {
   border: 1px solid #e1e1e1;
   font-size: 1em;
