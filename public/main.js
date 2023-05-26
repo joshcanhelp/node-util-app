@@ -19,3 +19,11 @@ document.querySelectorAll("[data-input-replace]").forEach((element) => {
     updateElement.value = clicked.innerText;
   });
 });
+
+document.querySelectorAll("[data-to-clipboard]").forEach((element) => {
+  element.addEventListener("click", (e) => {
+    navigator.clipboard
+      .writeText(e.target.getAttribute("data-to-clipboard"))
+      .then(() => alert("Copied!"));
+  });
+});

@@ -18,10 +18,10 @@ router.get("/api2", async (request, response) => {
 });
 
 router.get(appPath, requiresAuth(), async (request, response) => {
-  if (api2TokenCache.expires_at > nowInSeconds()) {
+  if (api2TokenCache.token && api2TokenCache.expires_at > nowInSeconds()) {
     return response.sendTemplate(
       "Management API token",
-      `<pre>${api2TokenCache.token}</pre>`
+      `<p><strong>Management API token cached!</strong> <a href="#" data-to-clipboard="${api2TokenCache.token}">Copy</a></p>`
     );
   }
 
