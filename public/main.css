@@ -55,13 +55,8 @@ textarea {
 }
 
 input[type=submit] {
-  font-size: 1.1em;
-  padding: 0.5em;
-  border-radius: 5px;
   border: none;
-  cursor: pointer;
   background: #635DFF;
-  color: white
 }
 
 /***
@@ -82,7 +77,26 @@ Custom
   color: red
 }
 
+input[type=submit],
+.button {
+  display: inline-block;
+  padding: 0.5em 1.25em;
+  border-radius: 5px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+input[type=submit]:hover,
+.button:hover {
+  opacity: 0.8;
+}
 [data-input-update],
 [data-input-replace] {
   cursor: pointer
+}
+nav a {
+  background: #1BC99F;
 }
