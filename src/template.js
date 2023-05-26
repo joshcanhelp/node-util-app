@@ -27,11 +27,11 @@ const getHeader = (request, title) => `
       }
     </p>
     <nav>
-      <a href="/">&lsaquo; Home</a> 
+      <a href="/" class="button">&lsaquo; Home</a> 
       ${
         request.oidc.isAuthenticated()
-          ? `<a href="/logout">Logout</a> <a href="/wp-api">WP API</a>`
-          : `<a href="/login">Login</a>`
+          ? `<a href="/logout" class="button">Logout</a> <a href="/wp-api" class="button">WP API</a> <a href="/api2" class="button">API2</a>`
+          : `<a href="/login" class="button">Login</a>`
       }
     </nav>
     <hr>
