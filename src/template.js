@@ -14,7 +14,7 @@ const getHeader = (request, title) => `
 <html lang="en">
   <meta charset="utf-8">
   <head>
-    <title>${title}</title>
+    <title>${title} - Node Util App</title>
     <link rel="stylesheet" href="/main.css">
   </head>
   <body>

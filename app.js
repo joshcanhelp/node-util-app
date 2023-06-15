@@ -48,7 +48,7 @@ app.get("/test", (request, response) => {
   response.sendTemplate("OK");
 });
 
-app.get("/", (request, response, next) => {
+app.get("/", (request, response) => {
   response.sendTemplate(
     "Home",
     `

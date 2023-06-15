@@ -45,6 +45,18 @@ router.get("/login", async (request, response) => {
         <strong>Do MFA?</strong>
       </label>
     </p>
+    <p>
+      <label>
+        <input type="checkbox" name="do_rules_failure" value="true">
+        <strong>Do Rules failure?</strong>
+      </label>
+    </p>
+    <p>
+      <label>
+        <input type="checkbox" name="do_actions_failure" value="true">
+        <strong>Do Actions failure?</strong>
+      </label>
+    </p>
     <p><input type="submit" value="Login"></p>
     </form>
     `
@@ -57,6 +69,8 @@ router.post("/login", async (request, response) => {
     authorizationParams: {
       do_redirect: request.body.do_redirect,
       do_mfa: request.body.do_mfa,
+      do_rules_failure: request.body.do_rules_failure,
+      do_actions_failure: request.body.do_actions_failure,
       response_type: request.body.response_type,
       audience: request.body.audience,
       scope: request.body.scope,
