@@ -74,6 +74,17 @@ app.get("/", (request, response) => {
   );
 });
 
+app.use((error, request, response, next) => {
+  response.send(
+    getHeader(request, "ERROR") + 
+    `<p><strong>Error message:</strong></p>` + 
+    `<blockquote>${error.message}</blockquote>` +
+    `<p><strong>URL params:</strong></p>` + 
+    `<pre>${JSON.stringify(request.query, null, 2)}</pre>` + 
+    getFooter()
+  );
+});
+
 app.listen(getAppPort(), () => {
   console.log("Your app is running at " + getBaseUrl());
   if (getBaseUrl() !== getAppUrl()) {

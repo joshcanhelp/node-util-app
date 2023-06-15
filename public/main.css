@@ -59,6 +59,14 @@ input[type=submit] {
   background: #635DFF;
 }
 
+blockquote {
+  border-left: 5px solid #635DFF;
+  border-radius: 4px;
+  background: #fafafa;
+  font-style: italic;
+  margin: 0 0 2em 0;
+  padding: 1.5em;
+}
 /***
 Custom
 ***/
