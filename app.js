@@ -31,7 +31,6 @@ const auth0Config = {
 
 app.use(auth(auth0Config));
 app.use((request, response, next) => {
-
   response.sendTemplate = (title, html) =>
     response.send(
       getHeader(request, title) + (html || "<h2>🤖</h2>") + getFooter()
@@ -78,18 +77,18 @@ app.get("/", (request, response) => {
 
 app.use((error, request, response, next) => {
   response.send(
-    getHeader(request, "ERROR") + 
-    `<p><strong>Error message:</strong></p>` + 
-    `<blockquote>${error.message}</blockquote>` +
-    `<p><strong>URL params:</strong></p>` + 
-    `<pre>${JSON.stringify(request.query, null, 2)}</pre>` + 
-    getFooter()
+    getHeader(request, "ERROR") +
+      `<p><strong>Error message:</strong></p>` +
+      `<blockquote>${error.message}</blockquote>` +
+      `<p><strong>URL params:</strong></p>` +
+      `<pre>${JSON.stringify(request.query, null, 2)}</pre>` +
+      getFooter()
   );
 });
 
 app.listen(getAppPort(), () => {
   if (ISSUER_BASE_URL[ISSUER_BASE_URL.length - 1] === "/") {
-    throw new Error("ISSUER_BASE_URL env variable has a trailing slash.")
+    throw new Error("ISSUER_BASE_URL env variable has a trailing slash.");
   }
 
   console.log("Your app is running at " + getBaseUrl());

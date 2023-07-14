@@ -1,8 +1,14 @@
-const { API2_AUDIENCE, APP_PORT, APP_BASE_URL, HTTPS_PORT, ISSUER_BASE_URL } = process.env;
+const {
+  API2_AUDIENCE,
+  APP_PORT,
+  APP_BASE_URL,
+  HTTPS_PORT,
+  ISSUER_BASE_URL,
+} = process.env;
 
 const getApi2Audience = () => {
   return API2_AUDIENCE ? API2_AUDIENCE : ISSUER_BASE_URL + "/api/v2/";
-}
+};
 
 const getAppPort = () => APP_PORT || 3000;
 
@@ -10,7 +16,7 @@ const getAppUrl = () =>
   HTTPS_PORT
     ? getBaseUrl().replace("http://", "https://").replace(APP_PORT, HTTPS_PORT)
     : getBaseUrl();
-        
+
 const getBaseUrl = () => APP_BASE_URL || `http://localhost:${getAppPort()}`;
 
 const getDashboardUrl = (path = "") => {

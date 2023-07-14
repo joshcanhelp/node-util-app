@@ -2,14 +2,21 @@ const { getAppUrl } = require("../../src/utils");
 
 const router = require("express").Router();
 
-const { CLIENT_ID, CLIENT_SECRET, ISSUER_BASE_URL, RO_LOGIN_REALM, WP_API_AUDIENCE, WP_API_SCOPES } = process.env;
+const {
+  CLIENT_ID,
+  CLIENT_SECRET,
+  ISSUER_BASE_URL,
+  RO_LOGIN_REALM,
+  WP_API_AUDIENCE,
+  WP_API_SCOPES,
+} = process.env;
 
 router.get("/login", async (request, response) => {
   response.sendTemplate(
     "Login",
     `
     <h2>Redirect Login</h2>
-    <p>Logging into <code>${ ISSUER_BASE_URL }</code></p>
+    <p>Logging into <code>${ISSUER_BASE_URL}</code></p>
     <form method="post">
       <p>
         <strong><label>Return to application path</label></strong>

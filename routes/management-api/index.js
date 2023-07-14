@@ -21,7 +21,7 @@ router.get(appPath, requiresAuth(), async (request, response) => {
       `<p>
         <strong>Management API token cached!</strong> 
         <a href="#" data-to-clipboard="${tokenCache.get()}">[Copy]</a>
-        ${ jwtIoLink(tokenCache.get()) }
+        ${jwtIoLink(tokenCache.get())}
         <ul>
           <li><a href="/ul-template">Set UL Template</a>
         </ul>
@@ -43,7 +43,7 @@ router.get(appPath, requiresAuth(), async (request, response) => {
       </p>
       <p>
         <strong><label for="m2m-audience">M2M Audience</label></strong>
-        <input type="text" name="audience" id="m2m-audience" value="${ getApi2Audience() }">
+        <input type="text" name="audience" id="m2m-audience" value="${getApi2Audience()}">
       </p>
       <p><input type="submit" value="Get token"></p>
     </form>
@@ -61,10 +61,7 @@ router.post(appPath, async (request, response) => {
   };
 
   try {
-    const token = await axios.post(
-      ISSUER_BASE_URL + "/oauth/token",
-      postData
-    );
+    const token = await axios.post(ISSUER_BASE_URL + "/oauth/token", postData);
 
     tokenCache.set(token.data.access_token, token.data.expires_in);
 

@@ -9,25 +9,25 @@ router.get("/ul-template", requiresAuth(), async (request, response) => {
   if (!tokenCache.get()) {
     return response.redirect("/management-api");
   }
-  
+
   let currentTemplate;
   try {
     const templateResponse = await axios.get(
       getApi2Audience() + "branding/templates/universal-login",
       {
         headers: {
-          "Authorization": `Bearer ${tokenCache.get()}`
-        }
+          Authorization: `Bearer ${tokenCache.get()}`,
+        },
       }
     );
     currentTemplate = templateResponse.data?.body || "";
   } catch (error) {
     return response.sendTemplate(
-        "Management API error",
-        `<p>API call failed:</p>
+      "Management API error",
+      `<p>API call failed:</p>
         <blockquote>${error.message}</blockquote>
         <p><a href="/ul-template">&lsaquo;Try again</a></p>`
-      );
+    );
   }
 
   response.sendTemplate(
@@ -52,8 +52,8 @@ router.post("/ul-template", async (request, response) => {
       {
         headers: {
           "Content-Type": "application/json",
-           "Authorization": `Bearer ${tokenCache.get()}`
-        }
+          Authorization: `Bearer ${tokenCache.get()}`,
+        },
       }
     );
   } catch (error) {
@@ -81,4 +81,4 @@ module.exports = router;
     {%- auth0:widget -%}
   </body>
 </html>
-`
+`;
