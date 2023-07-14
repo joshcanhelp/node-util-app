@@ -3,7 +3,7 @@ const { getDashboardUrl } = require("./utils");
 const { CLIENT_ID } = process.env;
 
 const jwtIoLink = (token) =>
-  `<a href="https://jwt.io/#debugger-io?token=${token}">jwt.io &rsaquo;</a>`;
+  `<a href="https://jwt.io/#debugger-io?token=${token}" target="_blank">[jwt.io]</a>`;
 
 const colorPurple = "#635DFF";
 const colorFaintGray = "#f1f1f1";
