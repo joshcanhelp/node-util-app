@@ -4,9 +4,9 @@ const router = require("express").Router();
 
 const { tokenCache } = require("./token-cache");
 const { jwtIoLink } = require("../../src/template");
-const { getApi2Audience } = require("../../src/utils");
+const { getApi2Url } = require("../../src/utils");
 
-const { API2_CLIENT_ID, API2_CLIENT_SECRET, ISSUER_BASE_URL } = process.env;
+const { API2_BASE_URL, API2_CLIENT_ID, API2_CLIENT_SECRET } = process.env;
 
 const appPath = "/management-api";
 
@@ -43,7 +43,7 @@ router.get(appPath, requiresAuth(), async (request, response) => {
       </p>
       <p>
         <strong><label for="m2m-audience">M2M Audience</label></strong>
-        <input type="text" name="audience" id="m2m-audience" value="${getApi2Audience()}">
+        <input type="text" name="audience" id="m2m-audience" value="${getApi2Url()}">
       </p>
       <p><input type="submit" value="Get token"></p>
     </form>
@@ -61,10 +61,8 @@ router.post(appPath, async (request, response) => {
   };
 
   try {
-    const token = await axios.post(ISSUER_BASE_URL + "/oauth/token", postData);
-
+    const token = await axios.post(API2_BASE_URL + "/oauth/token", postData);
     tokenCache.set(token.data.access_token, token.data.expires_in);
-
     return response.redirect(appPath);
   } catch (error) {
     return response.sendTemplate(

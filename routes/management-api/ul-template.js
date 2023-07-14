@@ -3,7 +3,7 @@ const { default: axios } = require("axios");
 const router = require("express").Router();
 
 const { tokenCache } = require("./token-cache");
-const { getApi2Audience } = require("../../src/utils");
+const { getApi2Url } = require("../../src/utils");
 
 router.get("/ul-template", requiresAuth(), async (request, response) => {
   if (!tokenCache.get()) {
@@ -12,8 +12,9 @@ router.get("/ul-template", requiresAuth(), async (request, response) => {
 
   let currentTemplate;
   try {
+    console.log(getApi2Url("branding/templates/universal-login"));
     const templateResponse = await axios.get(
-      getApi2Audience() + "branding/templates/universal-login",
+      getApi2Url("branding/templates/universal-login"),
       {
         headers: {
           Authorization: `Bearer ${tokenCache.get()}`,
@@ -25,8 +26,8 @@ router.get("/ul-template", requiresAuth(), async (request, response) => {
     return response.sendTemplate(
       "Management API error",
       `<p>API call failed:</p>
-        <blockquote>${error.message}</blockquote>
-        <p><a href="/ul-template">&lsaquo;Try again</a></p>`
+      <blockquote>${error.message}</blockquote>
+      <p><a href="/ul-template">&lsaquo;Try again</a></p>`
     );
   }
 
@@ -46,8 +47,9 @@ router.get("/ul-template", requiresAuth(), async (request, response) => {
 
 router.post("/ul-template", async (request, response) => {
   try {
+    console.log(getApi2Url("branding/templates/universal-login"));
     await axios.put(
-      getApi2Audience() + "branding/templates/universal-login",
+      getApi2Url("branding/templates/universal-login"),
       request.body,
       {
         headers: {
@@ -69,16 +71,3 @@ router.post("/ul-template", async (request, response) => {
 });
 
 module.exports = router;
-
-`
-<!DOCTYPE html>
-<html>
-  <head>
-    {%- auth0:head -%}
-  </head>
-  <body>
-    banana
-    {%- auth0:widget -%}
-  </body>
-</html>
-`;

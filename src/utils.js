@@ -1,13 +1,13 @@
 const {
-  API2_AUDIENCE,
+  API2_BASE_URL,
   APP_PORT,
   APP_BASE_URL,
   HTTPS_PORT,
   ISSUER_BASE_URL,
 } = process.env;
 
-const getApi2Audience = () => {
-  return API2_AUDIENCE ? API2_AUDIENCE : ISSUER_BASE_URL + "/api/v2/";
+const getApi2Url = (path = "") => {
+  return (API2_BASE_URL ? API2_BASE_URL : ISSUER_BASE_URL) + "/api/v2/" + path;
 };
 
 const getAppPort = () => APP_PORT || 3000;
@@ -29,7 +29,7 @@ const getTenantName = () => new URL(ISSUER_BASE_URL).host.split(".")[0];
 const nowInSeconds = () => Math.round(new Date().getTime() / 1000);
 
 module.exports = {
-  getApi2Audience,
+  getApi2Url,
   getAppPort,
   getAppUrl,
   getBaseUrl,
