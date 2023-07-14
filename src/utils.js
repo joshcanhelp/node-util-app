@@ -19,13 +19,6 @@ const getAppUrl = () =>
 
 const getBaseUrl = () => APP_BASE_URL || `http://localhost:${getAppPort()}`;
 
-const getDashboardUrl = (path = "") => {
-  const dashboard = `https://manage.auth0.com/dashboard/us/${getTenantName()}/`;
-  return dashboard + path.replace(/^(\/)/, "");
-};
-
-const getTenantName = () => new URL(ISSUER_BASE_URL).host.split(".")[0];
-
 const nowInSeconds = () => Math.round(new Date().getTime() / 1000);
 
 module.exports = {
@@ -33,7 +26,5 @@ module.exports = {
   getAppPort,
   getAppUrl,
   getBaseUrl,
-  getDashboardUrl,
-  getTenantName,
   nowInSeconds,
 };
