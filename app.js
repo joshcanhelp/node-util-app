@@ -31,6 +31,7 @@ const auth0Config = {
 
 app.use(auth(auth0Config));
 app.use((request, response, next) => {
+
   response.sendTemplate = (title, html) =>
     response.send(
       getHeader(request, title) + (html || "<h2>🤖</h2>") + getFooter()
@@ -40,6 +41,7 @@ app.use((request, response, next) => {
 app.use(express.static("public"));
 
 app.use("/", require("./routes/management-api"));
+app.use("/", require("./routes/management-api/ul-template"));
 app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
 app.use("/", require("./routes/wp-api"));
@@ -86,6 +88,10 @@ app.use((error, request, response, next) => {
 });
 
 app.listen(getAppPort(), () => {
+  if (ISSUER_BASE_URL[ISSUER_BASE_URL.length - 1] === "/") {
+    throw new Error("ISSUER_BASE_URL env variable has a trailing slash.")
+  }
+
   console.log("Your app is running at " + getBaseUrl());
   if (getBaseUrl() !== getAppUrl()) {
     console.log("Your app is accessible at " + getAppUrl());

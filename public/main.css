@@ -44,10 +44,10 @@ textarea {
   font-size: 1em;
   border-radius: 2px;
   padding: 0.25em;
-  max-width: 100%;
-  width: 40em;
+  max-width: 75%;
   display: block;
   margin: 0.5em 0;
+  width: 100%;
 }
 
 textarea {
@@ -107,4 +107,9 @@ input[type=submit]:hover,
 }
 nav a {
   background: #1BC99F;
+}
+textarea.code {
+  font-family: monospace;
+  height: 12em;
+  font-size: 0.9em;
 }
