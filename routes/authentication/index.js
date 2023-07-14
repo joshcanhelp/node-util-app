@@ -9,6 +9,7 @@ router.get("/login", async (request, response) => {
     "Login",
     `
     <h2>Redirect Login</h2>
+    <p>Logging into <code>${ ISSUER_BASE_URL }</code></p>
     <form method="post">
       <p>
         <strong><label>Return to application path</label></strong>
