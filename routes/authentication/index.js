@@ -2,62 +2,89 @@ const { getAppUrl } = require("../../src/utils");
 
 const router = require("express").Router();
 
-const { CLIENT_ID, WP_API_AUDIENCE, WP_API_SCOPES } = process.env;
+const { CLIENT_ID, CLIENT_SECRET, ISSUER_BASE_URL, RO_LOGIN_REALM, WP_API_AUDIENCE, WP_API_SCOPES } = process.env;
 
 router.get("/login", async (request, response) => {
   response.sendTemplate(
     "Login",
     `
-  <form method="post">
-    <p>
-      <strong><label>Return to application path</label></strong>
-      <input type="text" name="return_to" value="/">
-    </p>
-    <p>
-      <strong><label>Response type</label></strong>
-      <input type="text" name="response_type" value="code">
-    </p>
-    <p>
-      <strong><label for="login-audience">Audience</label></strong>
-      <input type="text" id="login-audience" name="audience" value="">
-      ${
-        WP_API_AUDIENCE &&
-        `Found <code data-input-replace="login-audience">${WP_API_AUDIENCE}</code>`
-      }
-    </p>
-    <p>
-      <strong><label for="login-scope">Scope</label></strong>
-      <input type="text" id="login-scope" name="scope" value="openid email profile">
-      ${
-        WP_API_SCOPES &&
-        `Found <code data-input-update="login-scope">${WP_API_SCOPES}</code>`
-      }
-    </p>
-    <p>
-      <label>
-        <input type="checkbox" name="do_redirect" value="true">
-        <strong>Do redirect?</strong>
-      </label>
-    </p>
-    <p>
-      <label>
-        <input type="checkbox" name="do_mfa" value="true">
-        <strong>Do MFA?</strong>
-      </label>
-    </p>
-    <p>
-      <label>
-        <input type="checkbox" name="do_rules_failure" value="true">
-        <strong>Do Rules failure?</strong>
-      </label>
-    </p>
-    <p>
-      <label>
-        <input type="checkbox" name="do_actions_failure" value="true">
-        <strong>Do Actions failure?</strong>
-      </label>
-    </p>
-    <p><input type="submit" value="Login"></p>
+    <h2>Redirect Login</h2>
+    <form method="post">
+      <p>
+        <strong><label>Return to application path</label></strong>
+        <input type="text" name="return_to" value="/">
+      </p>
+      <p>
+        <strong><label>Response type</label></strong>
+        <input type="text" name="response_type" value="code">
+      </p>
+      <p>
+        <strong><label for="login-audience">Audience</label></strong>
+        <input type="text" id="login-audience" name="audience" value="">
+        ${
+          WP_API_AUDIENCE &&
+          `Found <code data-input-replace="login-audience">${WP_API_AUDIENCE}</code>`
+        }
+      </p>
+      <p>
+        <strong><label for="login-scope">Scope</label></strong>
+        <input type="text" id="login-scope" name="scope" value="openid email profile">
+        ${
+          WP_API_SCOPES &&
+          `Found <code data-input-update="login-scope">${WP_API_SCOPES}</code>`
+        }
+      </p>
+      <p>
+        <label>
+          <input type="checkbox" name="do_redirect" value="true">
+          <strong>Do redirect?</strong>
+        </label>
+      </p>
+      <p>
+        <label>
+          <input type="checkbox" name="do_mfa" value="true">
+          <strong>Do MFA?</strong>
+        </label>
+      </p>
+      <p>
+        <label>
+          <input type="checkbox" name="do_rules_failure" value="true">
+          <strong>Do Rules failure?</strong>
+        </label>
+      </p>
+      <p>
+        <label>
+          <input type="checkbox" name="do_actions_failure" value="true">
+          <strong>Do Actions failure?</strong>
+        </label>
+      </p>
+      <p><input type="submit" value="Login"></p>
+    </form>
+    <hr>
+    <h2>RO Login</h2>
+    <form method="post" action="${ISSUER_BASE_URL}/oauth/token">
+      <p>
+        <strong><label for="ro-login-connection">Connection</label></strong>
+        <input type="text" id="ro-login-connection" name="realm" value="">
+        ${
+          RO_LOGIN_REALM &&
+          `Found <code data-input-replace="ro-login-connection">${RO_LOGIN_REALM}</code>`
+        }
+      </p>
+      <p>
+        <strong><label>Identifier</label></strong>
+        <input type="text" name="username" value="">
+      </p>
+      <p>
+        <strong><label>Password</label></strong>
+        <input type="password" name="password" value="">
+      </p>
+      <p>
+        <input type="hidden" name="grant_type" value="http://auth0.com/oauth/grant-type/password-realm">
+        <input type="hidden" name="client_id" value="${CLIENT_ID}">
+        <input type="hidden" name="client_secret" value="${CLIENT_SECRET}">
+        <input type="submit" value="Login">
+      </p>
     </form>
     `
   );
