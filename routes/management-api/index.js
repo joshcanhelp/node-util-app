@@ -1,15 +1,11 @@
 const { requiresAuth } = require("express-openid-connect");
-const { getAppUrl, nowInSeconds } = require("../../src/utils");
 const { default: axios } = require("axios");
-
 const router = require("express").Router();
 
-const { API2_CLIENT_ID, API2_CLIENT_SECRET, ISSUER_BASE_URL } = process.env;
+const { tokenCache } = require("./token-cache");
+const { jwtIoLink } = require("../../src/template");
 
-const api2TokenCache = {
-  token: "",
-  expires_at: 0,
-};
+const { API2_CLIENT_ID, API2_CLIENT_SECRET, ISSUER_BASE_URL } = process.env;
 
 const appPath = "/management-api";
 
@@ -18,15 +14,19 @@ router.get("/api2", async (request, response) => {
 });
 
 router.get(appPath, requiresAuth(), async (request, response) => {
-  if (api2TokenCache.token && api2TokenCache.expires_at > nowInSeconds()) {
+  if (tokenCache.get()) {
     return response.sendTemplate(
       "Management API token",
-      `<p><strong>Management API token cached!</strong> <a href="#" data-to-clipboard="${api2TokenCache.token}">Copy</a></p>`
+      `<p>
+        <strong>Management API token cached!</strong> 
+        <a href="#" data-to-clipboard="${tokenCache.get()}">[Copy]</a>
+        ${ jwtIoLink(tokenCache.get()) }
+        <ul>
+          <li><a href="/ul-template">Set UL Template</a>
+        </ul>
+      </p>`
     );
   }
-
-  api2TokenCache.token = "";
-  api2TokenCache.expires_at = 0;
 
   response.sendTemplate(
     "Get Management API token",
@@ -67,8 +67,7 @@ router.post(appPath, async (request, response) => {
       postData
     );
 
-    api2TokenCache.token = token.data.access_token;
-    api2TokenCache.expires_at = token.data.expires_in + nowInSeconds() - 30;
+    tokenCache.set(token.data.access_token, token.data.expires_in);
 
     return response.redirect(appPath);
   } catch (error) {
