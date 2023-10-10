@@ -16,7 +16,10 @@ router.get("/login", async (request, response) => {
     "Login",
     `
     <h2>Redirect Login</h2>
-    <p>Logging into <code>${ISSUER_BASE_URL}</code></p>
+    <p>
+      Logging into <code>${ISSUER_BASE_URL}</code><br>
+      Client ID <code>${CLIENT_ID}</code>
+    </p>
     <form method="post">
       <p>
         <strong><label>Return to application path</label></strong>
