@@ -73,7 +73,8 @@ router.get(postRoute, requiresAuth(), (request, response, next) => {
 
 router.post(postRoute, requiresAuth(), async (request, response, next) => {
   if (!request.oidc.accessToken) {
-    return response.send(
+    response.sendTemplate(
+      pageTitle,
       `No access token. <a href="/login">Try logging in</a>`
     );
   }
@@ -102,12 +103,19 @@ router.post(postRoute, requiresAuth(), async (request, response, next) => {
       }
     );
   } catch (error) {
-    return response.json(error.response?.data || error.message);
+    return response.sendTemplate(
+      pageTitle + " error",
+      `<p>Post could not be saved. WP response:</p>
+      <pre>${error.response?.data ? JSON.stringify(error.response.data, null, 2) : error.message}</pre>`
+    );
   }
 
-  response.send(
-    `<p>Post is published <a href="${apiResponse.data.link}" target="_blank">here</a></p>
-    <p><a href="${postRoute}">Post another 👉</a></p>`
+  response.sendTemplate(
+    pageTitle,
+    `<p>
+      <strong>Post is published <a href="${apiResponse.data.link}" target="_blank">here</a></strong>. 
+      <a href="${postRoute}">Post another?</a>
+    </p>`
   );
 });
 
