@@ -6,18 +6,18 @@ const { tokenCache } = require("./token-cache");
 const { getApi2Url } = require("../../src/utils");
 
 router.get("/ul-template", requiresAuth(), async (request, response) => {
-  if (!tokenCache.get()) {
+  const api2Token = tokenCache.get(getApi2Url());
+  if (!api2Token) {
     return response.redirect("/management-api");
   }
 
   let currentTemplate;
   try {
-    console.log(getApi2Url("branding/templates/universal-login"));
     const templateResponse = await axios.get(
       getApi2Url("branding/templates/universal-login"),
       {
         headers: {
-          Authorization: `Bearer ${tokenCache.get()}`,
+          Authorization: `Bearer ${api2Token}`,
         },
       }
     );
@@ -46,15 +46,19 @@ router.get("/ul-template", requiresAuth(), async (request, response) => {
 });
 
 router.post("/ul-template", async (request, response) => {
+  const api2Token = tokenCache.get(getApi2Url());
+  if (!api2Token) {
+    return response.redirect("/management-api");
+  }
+
   try {
-    console.log(getApi2Url("branding/templates/universal-login"));
     await axios.put(
       getApi2Url("branding/templates/universal-login"),
       request.body,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenCache.get()}`,
+          Authorization: `Bearer ${api2Token}`,
         },
       }
     );

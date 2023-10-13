@@ -1,15 +1,25 @@
 const { nowInSeconds } = require("../../src/utils");
 
-const cache = {
-  token: null,
-  expiresAt: 0,
-};
+const cache = {};
 
 const tokenCache = {
-  get: () => (cache.expiresAt < nowInSeconds() ? null : cache.token),
-  set: (token, expiresIn) => {
-    cache.token = token;
-    cache.expiresAt = expiresIn + nowInSeconds() - 30;
+  get: (aud) =>
+    cache[aud] && cache[aud].expiresAt > nowInSeconds()
+      ? cache[aud].token
+      : null,
+  getAll: () => {
+    Object.keys(cache).forEach((aud) => {
+      if (cache[aud].expiresAt < nowInSeconds()) {
+        delete cache[aud];
+      }
+    });
+    return cache;
+  },
+  set: (audience, token, expiresIn) => {
+    cache[audience] = {
+      token,
+      expiresAt: expiresIn + nowInSeconds() - 30,
+    };
   },
 };
 

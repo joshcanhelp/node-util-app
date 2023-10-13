@@ -15,40 +15,56 @@ router.get("/api2", async (request, response) => {
 });
 
 router.get(appPath, requiresAuth(), async (request, response) => {
-  if (tokenCache.get()) {
-    return response.sendTemplate(
-      "Management API token",
-      `<p>
-        <strong>Management API token cached!</strong> 
-        <a href="#" data-to-clipboard="${tokenCache.get()}">[Copy]</a>
-        ${jwtIoLink(tokenCache.get())}
-        <ul>
-          <li><a href="/ul-template">Set UL Template</a>
-        </ul>
-      </p>`
+  const cachedTokens = tokenCache.getAll();
+  const tokenAudiences = Object.keys(cachedTokens);
+
+  const template = [];
+
+  if (tokenAudiences.length) {
+    template.push("<h2>Cached tokens</h2>");
+    template.push("<ul>");
+    tokenAudiences.forEach((aud) =>
+      template.push(
+        `<li><code>${aud}</code> <a href="#" data-to-clipboard="${
+          cachedTokens[aud].token
+        }">[copy]</a> ${jwtIoLink(cachedTokens[aud].token)}</li>`
+      )
     );
+    template.push("</ul>");
+    template.push("<hr>");
   }
 
-  response.sendTemplate(
-    "Get Management API token",
-    `
+  if (tokenAudiences.includes(getApi2Url())) {
+    template.push("<h2>Management API</h2>");
+    template.push(
+      '<ul><li><a href="/ul-template">Set UL Template</a></li></ul>'
+    );
+    template.push("<hr>");
+  }
+
+  template.push(`
     <form method="post">
       <p>
         <strong><label for="m2m-client-id">M2M Client ID</label></strong>
-        <input type="text" name="client_id" id="m2m-client-id" value="${API2_CLIENT_ID}">
+        <input type="text" name="client_id" id="m2m-client-id" value="${API2_CLIENT_ID}" required>
       </p>
       <p>
         <strong><label for="m2m-client-secret">M2M Client Secret</label></strong>
-        <input type="password" name="client_secret" id="m2m-client-secret" value="${API2_CLIENT_SECRET}">
+        <input type="password" name="client_secret" id="m2m-client-secret" value="${API2_CLIENT_SECRET}" required>
       </p>
       <p>
         <strong><label for="m2m-audience">M2M Audience</label></strong>
-        <input type="text" name="audience" id="m2m-audience" value="${getApi2Url()}">
+        <input type="text" name="audience" id="m2m-audience" value="${getApi2Url()}" required>
+      </p>
+      <p>
+        <strong><label for="m2m-scope">Scope</label></strong>
+        <input type="text" name="scope" id="m2m-scope">
       </p>
       <p><input type="submit" value="Get token"></p>
     </form>
-    `
-  );
+    `);
+
+  response.sendTemplate("M2M", template.join(""));
 });
 
 router.post(appPath, async (request, response) => {
@@ -62,8 +78,11 @@ router.post(appPath, async (request, response) => {
 
   try {
     const token = await axios.post(API2_BASE_URL + "/oauth/token", postData);
-    tokenCache.set(token.data.access_token, token.data.expires_in);
-    return response.redirect(appPath);
+    tokenCache.set(
+      request.body.audience,
+      token.data.access_token,
+      token.data.expires_in
+    );
   } catch (error) {
     return response.sendTemplate(
       "Management API error",
@@ -72,6 +91,8 @@ router.post(appPath, async (request, response) => {
       <p><a href="/${appPath}">&lsaquo;Try again</a></p>`
     );
   }
+
+  return response.redirect(appPath);
 });
 
 module.exports = router;
