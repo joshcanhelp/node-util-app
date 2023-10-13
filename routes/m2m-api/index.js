@@ -8,9 +8,13 @@ const { getApi2Url } = require("../../src/utils");
 
 const { API2_BASE_URL, API2_CLIENT_ID, API2_CLIENT_SECRET } = process.env;
 
-const appPath = "/management-api";
+const appPath = "/m2m-api";
 
 router.get("/api2", async (request, response) => {
+  response.redirect(appPath);
+});
+
+router.get("/management-api", async (request, response) => {
   response.redirect(appPath);
 });
 

@@ -39,8 +39,8 @@ app.use((request, response, next) => {
 });
 app.use(express.static("public"));
 
-app.use("/", require("./routes/management-api"));
-app.use("/", require("./routes/management-api/ul-template"));
+app.use("/", require("./routes/m2m-api"));
+app.use("/", require("./routes/m2m-api/ul-template"));
 app.use("/", require("./routes/authentication"));
 app.use("/", require("./routes/redirect-from-auth0"));
 app.use("/", require("./routes/wp-api"));

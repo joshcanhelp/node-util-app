@@ -3,10 +3,6 @@ const { CLIENT_ID, TENANT_NAME } = process.env;
 const jwtIoLink = (token) =>
   `<a href="https://jwt.io/#debugger-io?token=${token}" target="_blank">[jwt.io]</a>`;
 
-const colorPurple = "#635DFF";
-const colorFaintGray = "#f1f1f1";
-const colorLightGray = "#e1e1e1";
-
 const getHeader = (request, title) => `
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +24,7 @@ const getHeader = (request, title) => `
       <a href="/" class="button">&lsaquo; Home</a> 
       ${
         request.oidc.isAuthenticated()
-          ? `<a href="/logout" class="button">Logout</a> <a href="/wp-api" class="button">WP API</a> <a href="/api2" class="button">API2</a>`
+          ? `<a href="/logout" class="button">Logout</a> <a href="/wp-api" class="button">WP API</a> <a href="/m2m-api" class="button">M2M</a>`
           : `<a href="/login" class="button">Login</a>`
       }
     </nav>
