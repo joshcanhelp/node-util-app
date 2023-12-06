@@ -13,6 +13,7 @@ const { SECRET, CLIENT_ID, CLIENT_SECRET, ISSUER_BASE_URL } = process.env;
 
 const auth0Config = {
   idpLogout: true,
+  auth0Logout: true,
   authRequired: false,
   secret: SECRET,
   baseURL: getAppUrl(),

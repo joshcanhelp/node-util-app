@@ -27,6 +27,7 @@ router.get("/ul-template", requiresAuth(), async (request, response) => {
       "Management API error",
       `<p>API call failed:</p>
       <blockquote>${error.message}</blockquote>
+      <pre>${JSON.stringify(error.response.data, null, 2)}</pre>
       <p><a href="/ul-template">&lsaquo;Try again</a></p>`
     );
   }
