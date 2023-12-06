@@ -115,7 +115,8 @@ router.post(postRoute, requiresAuth(), async (request, response, next) => {
     `<p>
       <strong>Post is published <a href="${apiResponse.data.link}" target="_blank">here</a></strong>. 
       <a href="${postRoute}">Post another?</a>
-    </p>`
+    </p>
+    <pre>${apiResponse.data}</pre>`
   );
 });
 
