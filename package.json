@@ -1,7 +1,7 @@
 {
   "main": "app.js",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^1.6.2",
     "dotenv": "^8.2",
     "express": "^4.17.1",
     "express-openid-connect": "^2.1.0"
