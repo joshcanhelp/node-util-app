@@ -52,8 +52,24 @@ $ open http://localhost:3000
 
 Click login, use any identity provider, and you should end up back in your local app with a **Logout** link.
 
-To provide TLS support, [install Caddy](https://caddyserver.com/docs/install) and run the following in a new CLI tab:
+To provide TLS support, [install Caddy](https://caddyserver.com/docs/install) and adjust the `.env` file to identify the ports to use for the application (`APP_PORT`) and the Caddy proxy (`HTTPS_PORT`):
+
+```
+# .env
+
+APP_PORT=5554
+HTTPS_PORT=5555
+```
+
+Next, run the following in a new CLI tab:
 
 ```
 $ npm run caddy
+```
+
+Finally, start the application:
+
+```bash
+$ npm start
+$ open https://localhost:5555
 ```
