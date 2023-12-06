@@ -6,7 +6,7 @@ const { tokenCache } = require("./token-cache");
 const { jwtIoLink } = require("../../src/template");
 const { getApi2Url } = require("../../src/utils");
 
-const { API2_BASE_URL, API2_CLIENT_ID, API2_CLIENT_SECRET } = process.env;
+const { API2_CLIENT_ID, API2_CLIENT_SECRET, ISSUER_BASE_URL } = process.env;
 
 const appPath = "/m2m-api";
 
@@ -81,7 +81,7 @@ router.post(appPath, async (request, response) => {
   };
 
   try {
-    const token = await axios.post(API2_BASE_URL + "/oauth/token", postData);
+    const token = await axios.post(ISSUER_BASE_URL + "/oauth/token", postData);
     tokenCache.set(
       request.body.audience,
       token.data.access_token,

@@ -106,7 +106,11 @@ router.post(postRoute, requiresAuth(), async (request, response, next) => {
     return response.sendTemplate(
       pageTitle + " error",
       `<p>Post could not be saved. WP response:</p>
-      <pre>${error.response?.data ? JSON.stringify(error.response.data, null, 2) : error.message}</pre>`
+      <pre>${
+        error.response?.data
+          ? JSON.stringify(error.response.data, null, 2)
+          : error.message
+      }</pre>`
     );
   }
 

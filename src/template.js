@@ -38,13 +38,17 @@ const getFooter = () => `
         <li><a href="https://github.com/auth0/express-openid-connect">Express OIDC repo</a></li>
         <li><a href="https://auth0.github.io/express-openid-connect/index.html">Express OIDC docs</a></li>
         <li><a href="https://github.com/joshcanhelp/node-util-app">This app's repo</a></li>
-        ${ TENANT_NAME ? `<li><a href="https://manage.auth0.com/dashboard/${
-          TENANT_NAME.split("@")[1]
-        }/${
-          TENANT_NAME.split("@")[0]
-        }/applications/${CLIENT_ID}/settings">
+        ${
+          TENANT_NAME
+            ? `<li><a href="https://manage.auth0.com/dashboard/${
+                TENANT_NAME.split("@")[1]
+              }/${
+                TENANT_NAME.split("@")[0]
+              }/applications/${CLIENT_ID}/settings">
           Application settings
-        </a></li>` : "" }
+        </a></li>`
+            : ""
+        }
         
       </ul>
     </footer>
