@@ -169,4 +169,13 @@ router.post("/clear-session", async (request, response) => {
   response.redirect("/");
 });
 
+router.get("/step-up", async (request, response) => {
+  response.oidc.login({
+    returnTo: "/",
+    authorizationParams: {
+      do_step_up: "true",
+    },
+  });
+});
+
 module.exports = router;

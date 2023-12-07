@@ -3,7 +3,7 @@
   "watch": [
     ".env",
     "routes/",
-    "source/",
+    "src/",
     "app.js"
   ]
 }
