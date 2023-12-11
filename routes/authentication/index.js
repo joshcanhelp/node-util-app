@@ -174,6 +174,7 @@ router.get("/step-up", async (request, response) => {
     returnTo: "/",
     authorizationParams: {
       do_step_up: "true",
+      // acr_values: "http://schemas.openid.net/pape/policies/2007/06/multi-factor"
     },
   });
 });
